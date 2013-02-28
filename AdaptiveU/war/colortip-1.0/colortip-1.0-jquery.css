@@ -1,0 +1,61 @@
+
+/*-----------------------------------------------------------------------------------------------*/
+/*                                      SIMPLE jQUERY TOOLTIP                                    */
+/*                                      VERSION: 1.1                                             */
+/*                                      AUTHOR: jon cazier                                       */
+/*                                      EMAIL: jon@3nhanced.com                                  */
+/*                                      WEBSITE: 3nhanced.com                                    */
+/*-----------------------------------------------------------------------------------------------*/
+
+/*-----------------------------------------------------------------------------------------------*/
+/*                         CSS RESET (MODIFIED VERSION OF YAHOO UI CSS RESET)                    */
+/*-----------------------------------------------------------------------------------------------*/
+
+
+
+/*-----------------------------------------------------------------------------------------------*/
+/*                                            TOOLTIP                                            */
+/*-----------------------------------------------------------------------------------------------*/
+
+.toolTip { /* This is the hook that the jQuery script will use */
+	background: transparent url(images/help.gif) no-repeat right;
+ /* This contains the .toolTipWrapper div that is absolutely positioned  */
+ position: relative;
+ z-index: 100;
+
+ 
+}
+
+	.toolTipWrapper { /* The wrapper holds its insides together */
+		width: 200px;
+		position: absolute; /* Absolute will make the tooltip float above other content in the page */
+		top: 20px;
+		display: none; /* It has to be displayed none so that the jQuery fadein and fadeout functions will work */
+		color: #555;
+		font-weight: normal;
+		font-size: 9pt; /* A font size is needed to maintain consistency */
+		margin-left: -65px;
+		z-index:100;
+
+	}
+	
+		.toolTipTop { /* Top section of the tooltip */
+			width: 200px;
+			height: 25px;
+			background:  url(../images/bubbleTop.png) no-repeat;
+		}
+
+		.toolTipMid { /* Middle section of the tooltip */
+			padding: 8px 15px;
+			background: url(../images/bubbleMiddle.png) repeat-x;
+		}
+		
+		.toolTipBtm { /* Bottom Section of the tooltip */
+			height: 10px;
+			background: url(../images/bubbleBtm.png) no-repeat bottom;
+		}
+		
+		
+		
+		
+		

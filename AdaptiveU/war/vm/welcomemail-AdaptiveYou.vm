@@ -1,0 +1,44 @@
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>SetMore - Welcome Email</title>
+
+</head>
+<body>
+	<table align="center" cellpadding="0" cellspacing="0" width="602" style="border-radius:8px; font-family:Helvetica; margin-top:30px;">
+     	<tbody><tr height="69px" style="border-bottom:1px solid #d0d1d2;">
+        	<!--<td background="http://www.fullcreative.com/projects/setmore/email/header_bg.jpg">
+        	<table cellpadding="0" cellspacing="0" width="602">
+            	<tbody><tr>
+                    <td></td>
+                    <td align="right"><a href="http://my.setmore.com/" style="margin:0px 30px 0px;"><img src="http://www.fullcreative.com/projects/setmore/email/signin_btn.gif" style="margin-top:2px;"></a></td>
+           		 </tr>
+            </tbody></table>
+            </td> -->		
+        </tr>
+        <tr background="http://www.fullcreative.com/projects/setmore/email/banner_bg.jpg" style=" display:block; height:197px; border-right:1px solid #ccc; border-left:1px solid #ccc;">	
+ 			<td>
+            	<h2 style="line-height:32px; font-size:32px; text-align:center; height:37px; margin:29px 0px 0px 0px;">You are Invited to AdaptiveYou!</h2>
+            	<div style="height:56px; display:block; width:541px; margin:12px 0px 0px 30px; padding:22px 0px 0px 0px;">
+                	<h3 align="center" style="margin:0px; font-size:16px; font-weight:normal;">Bored of formal assessment apps? No worries! Stay Cool!<br>Your search for fun-filled assessment app ends here at Adaptive You!</h3>
+                    <h4 align="center" style="font-size:12px; font-weight:normal; line-height:18px; color:#555; margin:3px 0px 0px 0px;">Login here <a href="http://www.adaptiveyou.com/" style="color:#008bca;">http://www.adaptiveyou.com</a></h4>
+                </div>
+            </td>
+        </tr> 
+        <tr background="" style="background-color:#fff; height:358px;">
+        	<td valign="top" style="border-right:1px solid #ccc; border-left:1px solid #ccc;"> 
+                <h2 style="padding:46px 0px 0px 29px; font-size:14px; color:#333333;">Hi</h2>
+	            <p style="padding:0px 28px 0px 29px; color:#333333; font-size:14px; line-height:20px;">This comes your way from AdaptiveYou, and we happily invite you to enjoy our cool app :) </p>
+                <p style="padding:0px 280px 0px 29px; font-size:14px; line-height:20px;">You have been invited by $invitee_name</p>
+                <p style="padding:0px 280px 0px 29px; font-size:14px; line-height:20px;"> -- <br>Thanks<br> The AdaptiveYou Crew</p>
+            </td>
+        </tr>        
+		<tr height="71px">
+            <!--<td background="http://www.fullcreative.com/projects/setmore/email/footer_bg.png" align="center" valign="middle" style="color:#c2c2c2; font-size:12px;">
+          		 �2001-2011 SetMore. All rights reserved.
+           </td> -->
+        </tr>
+    </tbody></table>
+	
+
+
+</body></html>

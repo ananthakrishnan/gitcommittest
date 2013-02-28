@@ -1,0 +1,70 @@
+/***** Badge Popup ******/
+.popup_close {
+	position: absolute;
+	right: 30px;
+	top: 20px;
+	font-size: 23px;
+	font-weight:bold;
+	font-size:20px;
+	cursor:pointer;
+}
+.badge_popup_content { display:block; }
+.badge_popup_content .person_name { padding-bottom:30px !important; }
+.badge_popup_content .picture_frame {
+	float:left;
+	margin-top:0px;
+	width:auto; height:auto;
+}
+.popup_holder {
+	position:absolute;
+	top:20px;
+	background:#ffffff;
+	padding:15px 30px 40px;
+	z-index:999999;
+	width:620px;
+	left:50%;
+	margin-left:-340px;
+	box-shadow: 4px 4px 4px #999;
+	border-radius:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	display:block;
+}
+.badge_popup_content .badge_detial_col { margin-left:0px; }
+.badge_popup_content .user_info li {
+	display:block;
+	margin-top:15px;
+	border-bottom:1px solid #aaabac;
+	padding-bottom:20px;
+}
+.badge_popup_content .user_info li img {
+	width:87px; height:87px;
+}
+.badge_popup_content .badges_count {
+	width: 580px;
+}
+.badge_popup_content .badges_count div.badges_row {
+	min-width: 140px;
+	float: left;
+	margin-left:13px;
+}
+.badge_popup_content .badges_count div.trophy_row {
+	min-width: 60px;
+	float: left;
+	margin-left: 10px;
+}
+.badge_popup_content .badges_count ul { margin: 0px; }
+.badge_popup_content .badges_count ul li {
+	height: 25px;
+	border:none;
+	margin:0px 10px 0px 0px;
+	padding:0px;
+}
+.badge_popup_content .badges_count ul li img {
+	width: 25px;
+	height:25px;
+}
+.badge_popup_content .grn_btn2 {
+	font-size:18px !important;
+	padding:6px 30px 7px !important;
+}

@@ -1,0 +1,228 @@
+@charset "utf-8";
+/* CSS Document */
+
+/*************************** Feedback & Support **************************/
+.feedback_btn {
+	float:right;
+	position:fixed;
+	bottom:0px;
+	right:0px;
+	background:#3f3f3f url(/images/others/feedback_bg.png) repeat-x 0px 5px;
+	margin-right:30px;
+	padding:0px 0px 0px 9px;
+	line-height:34px;
+	cursor:pointer;
+	border-radius:3px;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px 6px 0px 0px;
+	z-index:41;
+}
+.feedback_btn:hover {
+	height: 37px;
+}
+.feedback_btn span {
+	padding:0px 10px 0px 23px;
+	color:#ccc;
+	background:url(/images/others/feedback_icon.png) no-repeat 0px 4px;
+	cursor:pointer;
+	font-weight: lighter;
+}
+.feedback_btn strong {
+	font-weight: 600;
+	color: #fff;
+}
+/***** Feedback popup window *****/
+
+#feedback_popup_window {
+	position:absolute;
+	display:none;
+	top:20%;
+	left:50%;
+	margin-left:-260px;
+	width:520px;
+	z-index:1001;
+	background:url(/images/others/feedback_info_bg.png) no-repeat left 0px;
+	padding:34px 0px 0px 37px;
+}
+
+.feedback_holder {
+	background:#fff;
+	border-radius:0px;
+	width:474px;
+	padding:0px 0px 20px 0px;
+	border:1px solid #aaa;
+	box-shadow:0px 0px 10px #ccc;
+}
+.feedback_header {
+	background:#f7f7f7;
+	padding:27px 30px 20px 30px;
+	
+}
+.feedback_header h2 {
+	font-size:20px;
+	font-weight:600px;
+	color:#000;
+	float:left;
+	width:196px;
+}
+.feedback_header .popup_close {
+	background:url(/images/others/feedback_icon.png) no-repeat -1px -32px;
+	width:15px;
+	height:15px;
+	display:block;
+	float:right;
+	cursor:pointer;
+	position: absolute;
+	right: 70px;
+	top: 62px;
+	margin: 0px;
+}
+.myaccount_header .popup_close:hover {
+	text-decoration:none;
+}
+.feedback_nav {
+	padding:0px 0px 0px 27px;
+	background:url(/images/others/feedback_bg.png) repeat-x 0px -133px;
+	height:34px;
+
+}
+.feedback_nav li {
+	float:left;
+	line-height:32px;
+	padding:1px 17px;
+	cursor:pointer;
+	color:#555;
+	border-left:1px solid #ccc;
+	position:relative;
+	font-size: 12px;
+}
+ .feedback_nav li.active {
+	border:1px solid #a5a5a5;
+	padding:0px 16px 0px 17px;
+	background:url(/images/others/feedback_bg.png) repeat-x 0px -98px;
+}
+ .feedback_nav li  span {
+	 width:18px;	height:8px;
+	 background:url(/images/others/feedback_icon.png) no-repeat center -242px;
+	 display:none;
+	 margin:0px auto;
+	 position:absolute;
+	 left:50%;	margin-left:-9px;
+	 top:32px;
+ }
+ .feedback_nav li.active span {
+	display:block;
+ }
+.feedback_nav li code {
+	background:url(/images/others/feedback_icon.png) no-repeat 0px 0px;
+	height:12px;
+	width:17px;
+	float:left;
+	margin:10px 1px 0px 0px;
+}
+.feedback_nav li.ask_ques {
+	border-right:1px solid #ccc;
+}
+.feedback_nav li.report code {
+	background-position:0px -60px;
+}
+ 
+.feedback_nav li.report code.active {
+	background-position:0px -88px;
+}
+.feedback_nav li.sugges code {
+	background-position:0px -120px;
+}
+ 
+.feedback_nav li.sugges code.active {
+	background-position:0px -149px;
+}
+.feedback_nav li.ask_ques code {
+	background-position:0px -177px;
+}
+ 
+.feedback_nav li.ask_ques code.active {
+	background-position:0px -203px;
+}
+
+.feedback_content {
+	margin:24px 0px 0px 29px;
+}
+.feedback_content h3 {
+	font-weight:bold;
+	color:#000;
+	padding:0px 0px 12px 0px;
+}
+.feedback_content .report_problem {
+	display:block;
+}
+.feedback_content .ask_qusetion, 
+.feedback_content .make_sugges {
+	display:none;
+}
+.feedback_content textarea{
+	width:392px;
+	height:84px;
+	border:1px solid #ccc;
+	margin-bottom:19px;
+	padding:10px;
+	font-family: 'Open Sans', serif;
+	font-size:12px;
+	color:#555;
+}
+.feedback_content textarea:focus {
+	 border: 1px solid #1490E7;
+    box-shadow: 0 0 3px #1490E7;
+}
+.feedback_content input.submit_btn {
+	margin:0px 11px 20px 0px;
+	background:url(/images/others/feedback_bg.png) repeat-x 0px -33px;
+	border:1px solid #b0b0b0;
+	border-radius:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	cursor:pointer;
+	height:31px;
+	font-weight:bold;
+	color:#000;
+	font-family: 'Open Sans', serif;
+	padding:0px 14px;
+	font-size:12px;
+}
+.feedback_content input.submit_btn:hover {
+	background:url(/images/others/feedback_bg.png) repeat-x 0px -65px;
+}
+.feedback_thank {
+	border-top:1px solid #ccc;
+	padding:62px 0px 0px 0px;
+	color:#000;
+	display:none;
+}
+.feedback_thank h3 {
+	text-align:center;
+	font-size:20px;
+	padding:0px 0px 16px 0px;
+	font-weight:bold;
+}
+.feedback_thank p {
+	text-align:center;
+	padding:0px 0px 28px 0px;
+	line-height:18px;
+}
+.feedback_thank code {
+	background:url(/images/others/feedback_setmore_logo.png) no-repeat 0px 0px;
+	height:35px;
+	width:98px;
+	display:block;
+	margin:0 auto;
+	padding-bottom:63px;
+}
+#backgroundPopup {
+	display:none;
+	position:absolute;
+	top:0px;
+	height:100%;
+	width:100%;
+	background:url(/images/others/popup_bg.png) repeat 0px 0px;
+	z-index:1000;	
+}

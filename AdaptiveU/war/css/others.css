@@ -1,0 +1,61 @@
+@charset "UTF-8";
+
+/* CSS Document */
+
+.full-width {
+	width: 930px;
+	margin-left: -30px;
+	padding-right: 0px;
+	margin-right: 0px;
+	max-height:500px;
+	overflow-y:scroll;
+}
+.full-width .person_list li {
+	margin: 20px 0px 0px 30px;
+	width: 420px;
+	float: left;
+	border: solid 1px #ccc;
+	border-top-color: #eee;
+	border-left-color: #eee;
+	padding:25px 0 0 0px;
+	border-radius:4px;
+}
+.full-width .person_list .badges_row li {
+	margin-left: 0px;
+	margin-right: 10px;
+	margin-bottom: 0;
+	color: #999;
+}
+.full-width .person_list .badges_row li {
+	box-shadow:none;
+	border: none;
+}
+.full-width .points_wrapper {
+	padding: 10px 10px 10px;
+	box-shadow:none;
+	background: url(../images/my_score_bg.gif) repeat-x 0px -2px;
+}
+.full-width .points_wrapper .badges_count {
+	background: transparent;
+	border: none;
+	border-radius:6px;
+	padding: 2px 0 0;
+	width: 280px;
+}
+.full-width .badges_count div.badges_row {
+	min-width: 140px;
+	float: left;
+	padding-bottom: 0px;
+}
+.full-width .badges_count div.trophy_row {
+	min-width: 60px;
+	float: left;
+	margin-left: 10px;
+}
+.full-width .badges_count ul {
+	margin: 0px;
+
+}
+.full-width .person_list .badges_count ul li {
+	height: 25px;
+}

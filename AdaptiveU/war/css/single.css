@@ -1,0 +1,72 @@
+@charset "UTF-8";
+
+/* CSS Document */
+
+.my_points {
+	height: 35px;
+	padding: 10px 20px  ;
+	margin-bottom: 30px;
+	border-radius: 4px;
+	background: #f0f5f7 url(../images/my_score_bg.gif) repeat-x;
+	box-shadow: 1px 1px 1px #999;
+
+}
+.user_info li {
+	margin-top: 21px;
+}
+.totals li {
+	margin-top: 0px;
+}
+.badge_detial_col .badges_list {
+	background: #eaf1f4;
+	padding: 30px;
+	margin-bottom: 30px;
+	box-shadow: inset 1px 1px 3px #c0cbcf;
+	border-radius: 4px;
+}
+#new_badge_list { 
+	width:590px;
+	margin-left:-325px;
+}
+#new_badge_list h3 {
+	font-size:21px;
+	padding:20px 10px 10px 0px;
+	border-bottom:1px solid #ebebeb;
+	margin:0px 0px 20px;
+}
+.new_badge_list {
+	height:320px;
+	overflow:auto;
+}
+.badge_detial_col .badges_list ul li, .badge_detial_col .trophy_list ul li, .new_badge_list ul li {
+	width: 87px;
+	background: #fff;
+	border: none;
+	margin-left: 5px;
+	margin-right: 4px;
+	margin-bottom: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	box-shadow:1px 1px 5px #e1e1e1
+ }
+ .new_badge_list ul li {
+ 	padding:10px;
+ 	float:left;
+ }
+.badge_detial_col .badges_list ul li img, .new_badge_list ul li img {
+	width: 87px;
+	height: 87px;
+}
+.badges_list h2, .trophy_list h2 {
+	color: #6b7e84;
+	margin-bottom: 20px;
+}
+.badge_detial_col .badge-name {
+	font-size: 11px;
+	color: #8b9ba0;
+	font-weight: bold;
+}
+.single-wrapper {
+	background: #fff url(../images/sidebar_bg.png) repeat-y left top;
+	padding-top: 20px;
+}

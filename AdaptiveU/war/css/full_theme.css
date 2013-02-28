@@ -1,0 +1,47 @@
+body
+{
+	/*background:#444; Changes by cs team*/
+	background:#fff;
+	
+}
+.tool_nav {
+	border-bottom:none;
+}
+.header_holder
+{	
+	background:#fff url(../images/cs_logo.png) 27px 5px no-repeat;
+	/*height: 45px; Changes by cs team*/
+	height : 52px;
+	border-bottom: 1px solid #989898 ;
+}
+
+.header_holder img
+{
+	display: none;
+}
+
+.tab_nav_holder ul li.selected
+{
+	/*background:#fff;*/
+	background: #F2F2F2; /*Changes by cs team*/
+	
+	border : solid 1px #777; /*Changes by cs team*/
+	border-bottom : solid 0px #777; /*Changes by cs team*/
+}
+.tab_nav_holder ul li.selected a{ color:#000; }
+
+.tool_nav ul li a.selected span
+{ 
+	display:block; 
+	margin:0px auto; 
+	height:7px; 
+	width:12px; 
+	/*background:#fff url(../images/tool_selected.gif) 45% bottom no-repeat;*/ /*Changes by cs team*/ 
+}
+
+/* This was included by cs team
+#header_wrapper
+{
+	border-bottom: 1px solid #989898 ;
+}
+*/

@@ -1,0 +1,123 @@
+@CHARSET "UTF-8";
+	 
+	
+/****** Popup **********/
+.popup_holder {
+	position:absolute;
+	top:20px;
+	background:#ffffff;
+	padding:0px 30px 10px;
+	z-index:101;
+	width:620px;
+	left:50%;
+	margin-left:-340px;
+	box-shadow: 4px 4px 4px #999;
+	border-radius:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	display:block;
+	margin-top:141px;
+}
+#backgroundPopup {
+	display:none;
+	position:absolute;
+	top:0px;
+	height:100%;
+	width:100%;
+	background:url(../images/popup_bg.png) repeat;
+	z-index:100;
+}
+
+.popup_close {
+	position:absolute;
+	font-weight:bold;
+	right:0;
+	margin:10px 14px 0px 0px;
+	font-size:20px;
+	cursor:pointer;
+}
+.popup_holder .badge_detial_col {
+	margin: 0px;
+	height:auto !important;
+}
+.popup_img {
+	float:left;
+	border:10px solid #e8f2f4;
+	padding:0px;
+	border-radius:4px;
+	-moz-border-radius:4px;
+	-webkit-border-radius:4px;
+	box-shadow: 1px 1px 1px #eee;
+	position:relative;
+}
+code.badge_icon {
+	background:url(../images/total_icons.png) 0px 0px no-repeat;
+	width:20px;
+	height:30px;
+	position:absolute;
+	margin:82px 0px 0px 0px;
+	left:0px; top:0px;	
+}
+.popup_holder .person_name {
+	float:left;
+	clear:none;
+	padding:45px 0px 40px 20px;
+	margin: 0px;
+}
+.popup_holder .person_name h3 {
+	font-size:25px;
+	font-weight:bold;
+}
+.popup_holder .person_name h4 {
+	margin: 10px 0 0 0px;
+	font-size:17px;
+}
+.popup_holder .badges_list {
+	max-height:250px;
+	overflow-y:auto;
+	padding: 20px !important;
+	margin-bottom:20px !important;
+}
+.popup_holder .badges_list p {
+	margin:0px 0px 14px 0px;
+	line-height:18px;
+}
+.popup_holder .badges_list p.last {
+	margin-bottom:0px !important;
+}
+.popup_holder .badges_list ul li {
+	background:none !important;
+	box-shadow:none !important;
+	float:none;
+	width:auto !important;
+	margin:0px 0px 0px 5px !important;
+	padding:0px !important;
+}
+.popup_holder .badges_list h3 {
+	font-size:16px;
+	font-weight:bold;
+}
+.popup_holder .badges_list textarea {
+	width:450px;
+	height:40px;
+	margin:15px 0px 0px;
+	border:1px solid #e4e4e4;
+	box-shadow: inset 0px 0px 4px #eee; 
+	-moz-box-shadow: inset 0px 0px 4px #eee; 
+	-webkit-box-shadow: inset 0px 0px 4px #eee; 
+	float:left;
+	padding:10px 0px 0px 10px;
+	font-size:14px;
+	font-family: "Open Sans",arial;
+	color:#555555;
+}
+.popup_holder .badges_list input[type="submit"] {
+	border:1px solid #b8b8b8;
+	background:url(../images/btn_bg.gif) 0px 0px repeat-x;
+	font-size:17px;
+	color:#555555;
+	padding:4px 30px 5px;
+	cursor:pointer;
+	margin:32px 0px 0px 10px;
+	float:left;
+}

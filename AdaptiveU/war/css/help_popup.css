@@ -1,0 +1,146 @@
+/* Following styles for help popup  */
+.popup_close {
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 10px 14px 0 0;
+    position: absolute;
+    right: 0;
+}
+#helpPopup{
+	background: #ffffff;
+	border: 1px solid #aaa;
+	padding: 30px 30px 40px;
+	width: 670px;
+	position: absolute;
+	top: 10%;
+	left: 50%;
+	margin-left: -315px;
+	line-height: 20px;
+	z-index: 10001;
+	display: none;
+	box-shadow: 0px 0px 10px #ccc;
+	-moz-box-shadow: 0px 0px 10px #ccc;
+	-webkit-box-shadow: 0px 0px 10px #ccc;
+}
+
+#helpPopup .cancel {
+    background: url("../images/cancel-x.png") no-repeat scroll 0 3px transparent;
+    cursor: pointer;
+    float: right;
+    height: 12px;
+    width: 12px;
+}
+
+#helpPopup h3 {
+    border-bottom: 1px solid #CCCCCC;
+    color: #000000;
+    font-size: 20px;
+    margin: 0;
+    padding: 0 0 15px;
+}
+
+#helpPopup ul#helpQAList{
+	height : 350px;
+	overflow: auto;
+	position: relative;
+}
+
+#helpPopup ul#helpQAList li{
+	border-bottom: 1px solid #cccccc;
+}
+
+#helpPopup ul#helpQAList li.noBorder{
+	border-bottom: none !important;
+}
+
+#helpPopup .message{
+	border-bottom: 1px solid #CCCCCC;
+    color: #777;
+    line-height: 20px;
+    padding: 15px 0;
+    font-size: 12px;
+}
+#help_search {
+	background:#fff url(../images/images2/icons.png) no-repeat 185px -177px;
+	height:26px;	
+	position:relative;
+	border:1px solid #ccc;
+	border-top:1px solid #bbb;
+	color:#999;
+	width: 175px;
+	padding: 0px 25px 0px 5px;
+	margin-right: 10px;
+}
+#helpPopup a{
+	color: #2A76A9;
+}
+
+#helpPopup .question{
+	line-height: 35px;
+	padding-left: 20px;
+	color: #2A76A9;
+	font-weight: 600;
+	cursor: pointer;
+}
+#helpPopup .multilineQuestion
+{
+	line-height : 20px;
+}
+
+#helpPopup .question:hover {
+	background: #f4f4f4;
+}
+
+#helpPopup .listIcon{
+	background: url(../images/help_icons.gif) no-repeat 0px 10px;
+	width: 15px;
+	height: 30px;
+	position: absolute;
+	margin-left: -20px;
+	color: #AEAEAE;
+}
+#helpPopup .toggle .listIcon{
+	background: url(../images/help_icons.gif) no-repeat -30px 10px;
+}
+
+#helpPopup .answer{
+	line-height: 20px;
+	padding:5px 20px 5px 20px;
+	display: none;
+}
+#helpPopup .answer p{
+	margin: 0 0 20px;
+}
+
+#helpPopup .answer li
+{
+	list-style: disc;
+	border : none !important;	
+	margin-left : 55px;
+	font-size : 12px;
+}
+.helpCategory{
+	border: none !important;
+}
+.helpCategoryTwo{
+	margin-left : 30px;
+}
+.helpCategory h2{
+	font-size: 15px;
+	font-weight: 600;
+	padding-top: 10px;
+	display: block;
+}
+.helpCategory .answer h2
+{
+	font-size : 13px;
+} 
+.answerList li{
+	border: none !important;
+    list-style: disc;
+    margin-left: 30px;
+    padding: 5px 0;
+    text-align: justify;
+}
+/* End Help popup styles */

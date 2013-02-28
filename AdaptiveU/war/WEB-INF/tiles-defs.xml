@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"	
+       "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+
+<tiles-definitions>
+
+<definition name="login" template="/jsp/Login.jsp">
+ </definition>
+ 
+ <definition name="user" template="/jsp/AY2.0/meV2.jsp">
+    <!--  <definition name="user" template="/jsp/me.jsp">  -->
+ </definition>
+ 
+  <definition name="admin" template="/jsp/admin.jsp">
+ </definition>
+ 
+   <definition name="earnBadges" template="/jsp/AY2.0/badge-detail.jsp">
+ </definition>
+ 
+ 
+ <definition name="logout" template="/jsp/Login.jsp">
+ </definition>
+  
+<!--  <definition name="others" template="/jsp/others.jsp">-->
+ <definition name="others" template="/jsp/AY2.0/everyone.jsp"> 
+ </definition> 
+  
+ <definition name="addNewBadge" template="/jsp/add_new_badge.jsp">
+ </definition> 
+ 
+     <definition name="manageTeam" template="/jsp/manage_team.jsp">
+ </definition> 
+ 
+       <definition name="addstuff" template="/jsp/add_stuff.jsp">
+ 		</definition> 
+ 
+       <definition name="displayAllTransactions" template="/jsp/userhistory.jsp">
+ </definition> 
+ 
+     <definition name="approvestuff" template="/jsp/approve_stuff.jsp">
+ </definition> 
+ 
+     <definition name="approveBadge" template="/jsp/approve_badge.jsp">
+ </definition> 
+ 
+     <definition name="error" template="/jsp/error.jsp">
+ </definition> 
+ <definition name="companyselector" template="/jsp/companySelector.jsp">
+ </definition>
+ 
+ <definition name="embedBadgePage" template="/jsp/embedBadgePage.jsp">
+    </definition>
+    
+     <definition name="requestAccess" template="/jsp/requestAccess.jsp">
+    </definition>
+     
+     <definition name="aystore" template="/jsp/AY2.0/aystore.jsp">
+ </definition>
+     
+</tiles-definitions>

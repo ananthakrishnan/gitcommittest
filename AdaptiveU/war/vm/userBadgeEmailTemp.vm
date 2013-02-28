@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Untitled Document</title>
+</head>
+
+<body style="margin:0px;">
+<table width="725px" cellpadding="0" cellspacing="0" border="0" bgcolor="#e7ebeb" style="padding:20px 0px;">
+	<tr>
+    	<td colspan="2">
+        	<a href="#" style=" padding:0px 0px 15px 20px;font-family:arial; font-weight:bold; font-size:30px; text-decoration:none; color:#454444; display:block;">$companyName</a>
+        </td>
+    </tr>
+    <tr>
+    	<td colspan="2">
+        	<table width="725px" height="304px" cellpadding="0" cellspacing="0" border="0" background="http://adaptivecourse.appspot.com/images/banner_bg.png" style="padding:40px 0px;" 
+            bgcolor="#e7ebeb">
+            	<tr valign="top">
+                	<td>
+                    	<h1 style="font-family:Georgia, 'Times New Roman', Times, serif; font-size:48px; font-weight:bold; color:#ffffff; text-shadow: 1px 1px 1px #676c6f; margin:0px 0px 15px; padding-left:20px;">Congratulations ! </h1>
+                        <img src="$badgeimage" width="94" height="94" style="float:left; margin-right:10px; padding-left:20px;"/>
+                        <span style="font-family:Arial, Helvetica, sans-serif; font-weight:bold; font-size:28px; color:#ffffff; text-shadow:1px 1px 1px #74797c;padding-top:10px; float:left; line-height:37px;">You have won $badgename  $points</span>
+                    </td>
+                    <td>
+                    	<div style="position:relative !important;">
+							<img src="$userimg" width="136" height="136" style="margin: 30px 40px 0px 0px;"/>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+    	<td colspan="2">
+        	<h2 style="font-size:24px; font-family:Arial, Helvetica, sans-serif; padding:0px 0px 0px 20px; color:#454444; font-weight:bold; margin:0px;">Hi $username,</h2>
+            <p style="font-size:24px; font-family:Arial, Helvetica, sans-serif; padding:17px 0px 25px 20px; color:#454444; margin:0px;">Congrats, you have received a Badge from $adminname.</p>
+        </td>
+    </tr>
+    <tr>
+		<td width="304" height="60"></td>
+    	<td width="421px" background="http://adaptivecourse.appspot.com/images/check_point.png" align="left">
+        	<a href="http://www.adaptiveyou.com" target= "_blank" style="font-family:Arial, Helvetica, sans-serif; font-size:18px; color:#222222; padding:0px 0px 0px 40px; text-decoration:none;">:) Check out your points  to buy the stuff </a>
+        </td>
+    </tr>
+    <tr>
+    	<td colspan="2" style="font-family:Arial, Helvetica, sans-serif; font-size:18px; color:#454444; padding:30px 0px 10px 20px;">Check for the other badges & trophy we wish you to win them.</td>
+    </tr>
+    <tr>
+    	<td colspan="2">
+        	<table cellpadding="0" cellspacing="0" border="0" width="725px">
+            	<tr height="168px" valign="top" style="padding-left:20px">
+                	<td><img src="http://adaptivecourse.appspot.com/images/badge-typing.png" width="94" height="94" style="padding-left:20px;"/></td>
+                	<td><img src="http://adaptivecourse.appspot.com/images/badge-2.png" width="94" height="94" /></td>
+                	<td><img src="http://adaptivecourse.appspot.com/images/badge-android.png" width="94" height="94" /></td>
+                	<td><img src="http://adaptivecourse.appspot.com/images/badge-3.png" width="94" height="94" /></td>
+               	</tr>
+                <tr height="110px" valign="top">
+                	<td><img src="http://adaptivecourse.appspot.com/images/trophy.png" width="94" height="94" style="padding-left:20px;"/></td>
+                	<td><img src="http://adaptivecourse.appspot.com/images/trophy.png" width="94" height="94" /></td>
+                	<td><img src="http://adaptivecourse.appspot.com/images/trophy.png" width="94" height="94" /></td>
+                	<td><img src="http://adaptivecourse.appspot.com/images/trophy.png" width="94" height="94" /></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+    	<td colspan="2" background="http://adaptivecourse.appspot.com/images/btm_viewmore.png" height="68px" align="right" valign="middle" style="#height:22px;">
+        	<a href="http://www.adaptiveyou.com" target= "_blank" style="font-family:Arial, Helvetica, sans-serif; font-size:18px; color:#222222; text-decoration:none; margin-right:90px;">View More Badges & Trophy </a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

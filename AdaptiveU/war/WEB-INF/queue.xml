@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<queue-entries>
+	<!--Set the number of max concurrent requests to 10 -->
+	<queue>
+		<name>checkEndTime</name>
+		<rate>1/s</rate>
+	</queue>
+	
+	
+	<queue>
+		<name>cmsconfiguration</name>
+		<rate>2/s</rate>
+	</queue>
+	
+</queue-entries>
+
+

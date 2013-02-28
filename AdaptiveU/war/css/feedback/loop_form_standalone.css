@@ -1,0 +1,63 @@
+/* @override 
+	http://localhost:8888/form/css/loop_form_standalone.css */
+
+body {
+		background: #e1ecf4;
+}
+body div#wrapper div#feedback_popup_window {	
+/* 	background-color:red; */
+	left:35%;
+	top:120px;
+	border:1px solid #aaa;
+	width: 376px;
+	padding-top: 20px;
+	box-shadow: 0px 0px 12px #a5adb5;
+	-moz-box-shadow:0px 0px 12px #a5adb5;
+	-webkit-box-shadow: 0px 0px 12px #a5adb5;
+	background: #fff;
+}
+.header {
+	background: #232c34;
+	text-align: center;
+	position: fixed;
+	width: 100%;
+	z-index: 100;
+	padding: 10px 0px 15px;
+	font-family: "Open Sans", Arial;
+	display: block;
+
+}
+/*#header_tail {
+	height: 15px;
+	width: 40px;
+	background:  url(../../images/header-tail.png) bottom;
+	position: absolute;
+	z-index: 1000;
+	top: 78px;
+	left: 50%;
+	margin-left: -22px;
+}*/
+.header h1 {
+	color: #fff;
+	font-size: 34px;
+	margin: 0px 0px 0px;
+	font-weight: bold;
+	line-height: 1.6em;
+}
+.header p {
+	color: #ccc;
+	padding: 0px 0;
+	font-size: 13px;
+/*	text-transform: uppercase;*/
+}
+h2.loop_title {
+	display: none;
+}
+p#form_desc {
+	font-size: 13px;
+	line-height: 1.6em;
+	color: #555;
+	text-align: center;
+	margin-bottom: 20px;
+	display: block;
+}
