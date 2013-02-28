@@ -1073,12 +1073,12 @@ background: url(../images/medium-cta.png) 0px -112px no-repeat;
 				<form method="get" id="create_account" name="login_form"  action="###" >
 					<ul>
 						<li>
-							<input type="text" readonly="" value="Saranya Shanmugavel" id="name" name="name">
+							<input type="text" readonly="" value="" id="name" name="name">
 							<label for="name" style="position: relative;margin-top:-10px;">Name</label>
 						</li>
 						
 						<li>
-							<input type="text" readonly="" value="saranya.shanmugavel@a-cti.com" id="user_email" name="user_email">
+							<input type="text" readonly="" value="" id="user_email" name="user_email">
 							<label for="email" style="position: relative;margin-top:-10px;">Email</label>
 						</li>
 						

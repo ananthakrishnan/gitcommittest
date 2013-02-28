@@ -655,9 +655,11 @@ $(document).ready(function()
 	
 	if(String(userDetails[userKey].companyName) === "" && String(userDetails[userKey].type) === "Company")
 	{
-		console.log("in")
 		$("#backgroundPopup,#form_wrapper").fadeIn();
 		$("#backgroundPopup").css({"position":"fixed"});
+		
+		$("#name").html(userDetails[userKey].firstName+" "+userDetails[userKey].lastName);
+		$("#user_email").html(userDetails[userKey].userName);
 		
 		return false;
 	}
