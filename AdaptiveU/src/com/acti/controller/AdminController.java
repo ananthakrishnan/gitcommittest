@@ -49,7 +49,7 @@ public class AdminController extends HttpServlet
 {
 	private static final Logger log = Logger.getLogger(AdminController.class.getName());
 	@RequestMapping(value="/*.do/*" , method=RequestMethod.GET)
-	public  String  workingOnBadgesRemotely(HttpServletRequest request, HttpServletResponse response , HttpSession session ) throws JsonGenerationException, JsonMappingException, IOException, JSONException
+	public  String  workingOnBadgesRemotely(HttpServletRequest request, HttpServletResponse response , HttpSession session ) throws Exception
 	{
 		
 		
