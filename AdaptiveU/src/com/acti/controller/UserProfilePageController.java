@@ -28,9 +28,8 @@ import com.face4j.facebook.enums.HttpClientType;
 import com.face4j.facebook.enums.Permission;
 import com.face4j.facebook.exception.FacebookException;
 import com.face4j.facebook.factory.FacebookFactory;
-import com.adaptive.business.dao.AdaptiveYouDAO;
-import com.adaptive.business.service.AdaptiveYouoDataStore;
-import com.adaptive.business.service.ApproveBadgePage;
+import com.adaptive.business.dao.UserProfileDAO;
+import com.adaptive.business.dao.UserStatusDetailsDAO;
 import com.adaptive.business.service.UserProfilePage;
 import com.google.gson.Gson;
 import com.managementsystem.objects.People;
@@ -49,9 +48,10 @@ import static com.google.appengine.api.taskqueue.TaskOptions.Builder.*;
 @SuppressWarnings("deprecation")
 @Controller
 public class UserProfilePageController extends HttpServlet{
+	private static final Logger log = Logger.getLogger(UserProfilePageController.class.getName());
 	ResourceBundle lResourceBundle = ResourceBundle.getBundle("ApplicationResources");
 	@RequestMapping(value="/persistUser" , method=RequestMethod.GET)
-	public  String  verifyOpenIdResponseJson(HttpServletRequest req, HttpServletResponse response , HttpSession session ) throws JsonGenerationException, JsonMappingException, IOException
+	public  String  verifyOpenIdResponseJson(@RequestParam(value="badgedetail", required=false) String badgeid,HttpServletRequest req, HttpServletResponse response , HttpSession session ) throws JsonGenerationException, JsonMappingException, IOException
 	{
 		String emailId 			= (String)session.getAttribute("emailIdFirst");
 		String firstName		= (String)session.getAttribute("firstNameFirst");
@@ -79,6 +79,8 @@ public class UserProfilePageController extends HttpServlet{
 						return "login";
 				    }
 					
+					System.out.println(compId+" id");
+					
 					//log.warning("comes to if");
 					emailId = emailId.trim();
 					Date now = new Date();
@@ -99,7 +101,7 @@ public class UserProfilePageController extends HttpServlet{
 						         u1.setDomain(emailId.split("@")[1]);
 						         u1.setcompanyId(compId);
 						         u1.setLoginTime(now);
-						         pm.makePersistent(u1);
+						         UserProfileDAO.saveUserProfile(u1);
 						         respUserDetails.put(u1.getKey(), u1);
 			
 							  Gson gson				 = new Gson();
@@ -120,6 +122,7 @@ public class UserProfilePageController extends HttpServlet{
 						      sessionLogin.setAttribute("userFirstName",firstName);
 						      sessionLogin.setAttribute("userLastName", lastName);
 						      sessionLogin.setAttribute("userImage",profileImage);
+						      session.setAttribute("signinFlagFirst",null);
 					}
 					else
 					{
@@ -193,6 +196,8 @@ public class UserProfilePageController extends HttpServlet{
 					      sessionLogin.setAttribute("userFirstName",firstName);
 					      sessionLogin.setAttribute("userLastName", lastName);
 					      sessionLogin.setAttribute("userImage",profileImage);
+					      
+					      session.setAttribute("signinFlagFirst",null);
 					}
 						
 						
@@ -211,38 +216,7 @@ public class UserProfilePageController extends HttpServlet{
 					}
 					else
 					{
-						if(referrerUrl.contains("/admin"))
-						{
-							AdminPageController adminController = new AdminPageController();
-							adminController.adminPage(req,response);
-						}
-						else if(referrerUrl.contains("/manageTeam"))
-						{
-							ManageTeamPageController manageTeamController = new ManageTeamPageController();
-							manageTeamController.manageTeam(req, response);
-						}
-						else if(referrerUrl.contains("/addNewBadge"))
-						{
-							AddNewBadgePageController addNewBadgeController = new AddNewBadgePageController();
-							addNewBadgeController.addNewBadge(req, response);
-						}
-						else if(referrerUrl.contains("/addstuff"))
-						{
-							AddNewStuffPageController addNewBadgeController = new AddNewStuffPageController();
-							addNewBadgeController.addstuff(req, response,sessionLogin);
-						}
-						else if(referrerUrl.contains("/allStuffDetails"))
-						{
-							ApproveStuffPageController approveStuff = new ApproveStuffPageController();
-							approveStuff.requestStuffDetails(req,response);
-						}
-						else if(referrerUrl.contains("/approveBadge"))
-						{
-							ApproveBadgePageController approveBadgePage =new  ApproveBadgePageController();
-							approveBadgePage.allBadgeDetails(req,response);
-						}
-						
-							//response.sendRedirect(referrerUrl);approveBadge
+						response.sendRedirect(referrerUrl);
 					}
 							
 				
@@ -260,10 +234,10 @@ public class UserProfilePageController extends HttpServlet{
 		return "user";
 	}
 	
-	@RequestMapping(value="/storevideopercentage" , method=RequestMethod.POST)
+	@RequestMapping(value="/storevideopercentage1" , method=RequestMethod.POST)
 	protected void savevideopercentagewatched1(@RequestParam(value="userDetailsKey", required=false) String userDetailsKey,@RequestParam(value="status", required=false) String status,@RequestParam(value="videokey", required=false) String videoKey, HttpServletRequest request,HttpServletResponse response)
 	{
-		System.out.println("userDetailsKey :: "+userDetailsKey);
+		log.info("userDetailsKey :: "+userDetailsKey);
 		if(userDetailsKey != null && !(userDetailsKey.equals("undefined")) && !(userDetailsKey.equals("")))
 		{
 			PersistenceManager pmInstance					= 	PMF.get().getPersistenceManager();
@@ -305,42 +279,85 @@ public class UserProfilePageController extends HttpServlet{
 			{
 				pmInstance.close();
 			}
+			
+			
+			/*PersistenceManager addvideo2 = PMF.get().getPersistenceManager();
+			UserStatusDetails userStatusDetailsInfo= addvideo2.getObjectById(UserStatusDetails.class,userDetailsKey);
+			
+					 if(userStatusDetailsInfo.getVideostatus() != null)
+					  {
+						  ArrayList<String> previousVideoStatus=new ArrayList<String>();
+						  previousVideoStatus=userStatusDetailsInfo.getVideostatus();
+						  
+						  for(String iteratingVideoStatus : previousVideoStatus )
+						  {
+							  if(iteratingVideoStatus.contains(videoKey))
+							  {
+								  if(!(iteratingVideoStatus.contains(("completed"))))
+								  {
+									  int indexOfThisVideo			 = previousVideoStatus.indexOf(iteratingVideoStatus);
+									  previousVideoStatus.remove(iteratingVideoStatus);
+									  previousVideoStatus.add(indexOfThisVideo,videoKey+":"+status);
+								  }
+							  }
+						  }
+//						  for(int j=0;j<userStatusDetailsInfo.getVideostatus().size();j++)
+//						  {
+//							 if(userStatusDetailsInfo.getVideostatus().get(j).contains(videoKey+":"+"not started") || userStatusDetailsInfo.getVideostatus().get(j).contains(videoKey+":"+"started"))
+//							 {
+//								 previousVideoStatus.set(j,videoKey+":"+status );
+//							 }
+//						  }
+						  
+						  userStatusDetailsInfo.setVideostatus(previousVideoStatus);
+						  addvideo2.currentTransaction().begin();
+						  addvideo2.makePersistent(userStatusDetailsInfo);
+						  addvideo2.currentTransaction().commit();  
+					  }
+					 response.setContentType("text/html");
+					 try 
+					 {
+						response.getWriter().println("Stored");
+					 } 
+					 catch (IOException e) {
+						e.printStackTrace();
+					}*/
 		}
 		
 	}
 	
-	@RequestMapping(value="/stopWorkingOnThisBadge",method=RequestMethod.POST)
-	protected void stopWorkOnThisBadge(@RequestParam(value="badgeId", required=false) String badgeId,@RequestParam(value="userKey", required=false) String userKey,@RequestParam(value="companyKey", required=false) String companyKey,@RequestParam(value="userStatusDetailsKey", required=false) String userStatusDetailsKey,HttpServletResponse response)
-	{
-		PersistenceManager pmf 					= PMF.get().getPersistenceManager();
-		try
-		{
-			UserStatusDetails userStatusInfo		= pmf.getObjectById(UserStatusDetails.class,userStatusDetailsKey);
-				pmf.currentTransaction().begin();
-				pmf.deletePersistent(userStatusInfo);
-				pmf.currentTransaction().commit();
-		    pmf 					= PMF.get().getPersistenceManager();	
-			Query query =  pmf.newQuery(UserBadgeLogJdo.class,"userId == '"+userKey+"' && companyId == '"+companyKey+"'");
-			List<UserBadgeLogJdo> userBadgeLogInfo  = (List<UserBadgeLogJdo>)query.execute();
-			for( UserBadgeLogJdo userInfo:userBadgeLogInfo)
-			{
-				ArrayList<String>  badgesWorkingOn = userInfo.getBadgesWorkingOn();
-				badgesWorkingOn.remove(badgeId);
-				pmf.currentTransaction().begin();
-				userInfo.setBadgesWorkingOn(badgesWorkingOn);
-				pmf.makePersistent(userInfo);
-				pmf.currentTransaction().commit();
-			}
-			
-			response.setContentType("text/html");
-			response.getWriter().println("Success");
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		
-	}
+	 @RequestMapping(value="/stopWorkingOnThisBadge",method=RequestMethod.POST)
+	 protected void stopWorkOnThisBadge(@RequestParam(value="badgeId", required=false) String badgeId,@RequestParam(value="userKey", required=false) String userKey,@RequestParam(value="companyKey", required=false) String companyKey,@RequestParam(value="userStatusDetailsKey", required=false) String userStatusDetailsKey,HttpServletResponse response)
+	 {
+	  PersistenceManager pmf      = PMF.get().getPersistenceManager();
+	  try
+	  {
+	   UserStatusDetails userStatusInfo  = pmf.getObjectById(UserStatusDetails.class,userStatusDetailsKey);
+	    pmf.currentTransaction().begin();
+	    pmf.deletePersistent(userStatusInfo);
+	    pmf.currentTransaction().commit();
+	      pmf      = PMF.get().getPersistenceManager(); 
+	   Query query =  pmf.newQuery(UserBadgeLogJdo.class,"userId == '"+userKey+"' && companyId == '"+companyKey+"'");
+	   List<UserBadgeLogJdo> userBadgeLogInfo  = (List<UserBadgeLogJdo>)query.execute();
+	   for( UserBadgeLogJdo userInfo:userBadgeLogInfo)
+	   {
+		    ArrayList<String>  badgesWorkingOn = userInfo.getBadgesWorkingOn();
+		    badgesWorkingOn.remove(badgeId);
+		    pmf.currentTransaction().begin();
+		    userInfo.setBadgesWorkingOn(badgesWorkingOn);
+		    pmf.makePersistent(userInfo);
+		    pmf.currentTransaction().commit();
+	   }
+	   
+	   response.setContentType("text/html");
+	   response.getWriter().println("Success");
+	  }
+	  catch(Exception e)
+	  {
+	   e.printStackTrace();
+	  }
+	  
+	 }
 	
 	@RequestMapping(value="/makeRequestForStuff" , method=RequestMethod.POST)
 	protected void addStuff1(@RequestParam(value="stuffid", required=false) String stuffid,@RequestParam(value="points",required=false) String points,@RequestParam(value="userKey", required=false) String userid,@RequestParam(value="uniqueUserKey", required=false) String userStatusDetailsKey,HttpServletRequest request,HttpServletResponse response)
@@ -361,7 +378,7 @@ public class UserProfilePageController extends HttpServlet{
 		MailingService mail 							= new MailingService();
 		
 		//UUID id 										= UUID.randomUUID();
-		System.out.println("userStatusDetailsKey :::"+userStatusDetailsKey);
+		log.info("userStatusDetailsKey :::"+userStatusDetailsKey);
 		stuffInfo.setKey(userStatusDetailsKey);
 		stuffInfo.setStatus("purchased");
 		stuffInfo.setTypeRequested("stuff");
@@ -372,7 +389,7 @@ public class UserProfilePageController extends HttpServlet{
 		
 		try
 		{
-			addStuff.makePersistent(stuffInfo);
+			UserStatusDetailsDAO.saveUserStatusDetails(stuffInfo);
 			
 			BadgesList badgesListInfo					= addStuff.getObjectById(BadgesList.class,stuffid);
 			adminId 									= badgesListInfo.getbadgeAssignee();
@@ -473,33 +490,27 @@ public class UserProfilePageController extends HttpServlet{
 		     HttpSession lsession= request.getSession();
 			PersistenceManager addtostuffinfo = PMF.get().getPersistenceManager();
 			PersistenceManager badgestoworkonedit = PMF.get().getPersistenceManager();
-			String	isWorkingOnAlreadyExists = "true";
 			try
 			{
 				Query querybadgeLog =  badgestoworkonedit.newQuery(UserBadgeLogJdo.class,"userId == '"+userid+"'");
 				List<UserBadgeLogJdo> userBadgeLogInfo =  (List<UserBadgeLogJdo>)querybadgeLog.execute();
 				for(UserBadgeLogJdo indexUserBadgeLogInfo:userBadgeLogInfo)
 				{
-					if(!(indexUserBadgeLogInfo.getBadgesWorkingOn().contains(badgeid)))
+					if("badge".equalsIgnoreCase(badgeType))
 					{
-						isWorkingOnAlreadyExists = "false";
-						if("badge".equalsIgnoreCase(badgeType))
-						{
-							ArrayList<String> previousbadgesworkingon = indexUserBadgeLogInfo.getBadgesWorkingOn();
-							previousbadgesworkingon.add(badgeid);
-							indexUserBadgeLogInfo.setBadgesWorkingOn(previousbadgesworkingon);
-						}
-						else if("trophy".equalsIgnoreCase(badgeType))
-						{
-							ArrayList<String> previousTrophiesWorkingon = indexUserBadgeLogInfo.getTrophiesWorkingOn();
-							previousTrophiesWorkingon.add(badgeid);
-							indexUserBadgeLogInfo.setTrophiesWorkingOn(previousTrophiesWorkingon);
-						}
-						badgestoworkonedit.currentTransaction().begin();
-						badgestoworkonedit.makePersistent(indexUserBadgeLogInfo);
-						badgestoworkonedit.currentTransaction().commit();
-						
+						ArrayList<String> previousbadgesworkingon = indexUserBadgeLogInfo.getBadgesWorkingOn();
+						previousbadgesworkingon.add(badgeid);
+						indexUserBadgeLogInfo.setBadgesWorkingOn(previousbadgesworkingon);
 					}
+					else if("trophy".equalsIgnoreCase(badgeType))
+					{
+						ArrayList<String> previousTrophiesWorkingon = indexUserBadgeLogInfo.getTrophiesWorkingOn();
+						previousTrophiesWorkingon.add(badgeid);
+						indexUserBadgeLogInfo.setTrophiesWorkingOn(previousTrophiesWorkingon);
+					}
+					badgestoworkonedit.currentTransaction().begin();
+					badgestoworkonedit.makePersistent(indexUserBadgeLogInfo);
+					badgestoworkonedit.currentTransaction().commit();
 				}
 
 			}
@@ -507,76 +518,58 @@ public class UserProfilePageController extends HttpServlet{
 			{
 			}
 			
+			 PersistenceManager getvideodetails1 = PMF.get().getPersistenceManager();
+			 BadgesList getvideodetails = getvideodetails1.getObjectById(BadgesList.class,badgeid); 
 			
-			if("false".equalsIgnoreCase(isWorkingOnAlreadyExists))
-			{
-				 PersistenceManager getvideodetails1 = PMF.get().getPersistenceManager();
-				 BadgesList getvideodetails = getvideodetails1.getObjectById(BadgesList.class,badgeid); 
-				
-				 ArrayList<String> al=new ArrayList<String>();
-				 ArrayList<String> badgeVideoDetails= new ArrayList<String>();
-				 badgeVideoDetails=getvideodetails.getVideoid();
-				 //To update in UserStatusDetails  you need to send the primary key of the user
-				 if(badgeVideoDetails.size() > 0)
-				 {
-					 for(int i=0;i<badgeVideoDetails.size();i++)
-				     {
-						 al.add(badgeVideoDetails.get(i)+":"+"not started");
-					 }
-					  Date now = new Date();
-						  if(badgeVideoDetails.size()!= 0)
-						  {
-								  UserStatusDetails fornewworkonbadge = new UserStatusDetails();
-							      fornewworkonbadge.setKey(userStatusDetailsKey);
-							      fornewworkonbadge.setStatus("working on");
-							      fornewworkonbadge.setTypeRequested(badgeType);
-							      fornewworkonbadge.setUserId(userid);
-							      fornewworkonbadge.setCompanyId((String)lsession.getAttribute("companyKey"));
-							      fornewworkonbadge.setDateAdded(now);
-							      fornewworkonbadge.setStuffid(badgeid);
-							      fornewworkonbadge.setVideostatus(al);
-							     
-							      try
-							      {
-							    	  addtostuffinfo.makePersistent(fornewworkonbadge);
-							      }
-							      catch(Exception e)
-							      {
-							    	  e.printStackTrace();
-							      }
-							 
-						  }
-						
+			 ArrayList<String> al=new ArrayList<String>();
+			 ArrayList<String> badgeVideoDetails= new ArrayList<String>();
+			 badgeVideoDetails=getvideodetails.getVideoid();
+			 //To update in UserStatusDetails  you need to send the primary key of the user
+			 if(badgeVideoDetails.size() > 0)
+			 {
+				 for(int i=0;i<badgeVideoDetails.size();i++)
+			     {
+					 al.add(badgeVideoDetails.get(i)+":"+"not started");
 				 }
-				  else
-				  {
-					  Date now = new Date();
-					  PersistenceManager addtostuffinfo1 = PMF.get().getPersistenceManager();
-					  UserStatusDetails fornewworkonbadge1 = new UserStatusDetails();
-					   fornewworkonbadge1.setKey(userStatusDetailsKey);
-				       fornewworkonbadge1.setStatus("working on");
-				       fornewworkonbadge1.setTypeRequested(badgeType);
-				       fornewworkonbadge1.setUserId(userid);
-				       fornewworkonbadge1.setCompanyId((String)lsession.getAttribute("companyKey"));
-				       fornewworkonbadge1.setDateAdded(now);
-				       fornewworkonbadge1.setStuffid(badgeid);
-				       
-				       
-				       try
-				       {
-				    	   addtostuffinfo1.makePersistent(fornewworkonbadge1);
-				       }
-				       catch(Exception e)
-				       {
-				        e.printStackTrace();
-				       }
-				       finally{
-				    	   addtostuffinfo1.close();
-				       }
-				   } 
-				 response.setContentType("html/text");
-				 response.getWriter().print("Success");
-			}
+				  Date now = new Date();
+					  if(badgeVideoDetails.size()!= 0)
+					  {
+							  UserStatusDetails fornewworkonbadge = new UserStatusDetails();
+						      fornewworkonbadge.setKey(userStatusDetailsKey);
+						      fornewworkonbadge.setStatus("working on");
+						      fornewworkonbadge.setTypeRequested(badgeType);
+						      fornewworkonbadge.setUserId(userid);
+						      fornewworkonbadge.setCompanyId((String)lsession.getAttribute("companyKey"));
+						      fornewworkonbadge.setDateAdded(now);
+						      fornewworkonbadge.setStuffid(badgeid);
+						      fornewworkonbadge.setVideostatus(al);
+						     
+						      try
+						      {
+						    	  UserStatusDetailsDAO.saveUserStatusDetails(fornewworkonbadge);
+						      }
+						      catch(Exception e)
+						      {
+						    	  e.printStackTrace();
+						      }
+						 
+					  }
+					
+			 }
+			  else
+			  {
+				  Date now = new Date();
+				  PersistenceManager addtostuffinfo1 = PMF.get().getPersistenceManager();
+				  UserStatusDetails fornewworkonbadge1 = new UserStatusDetails();
+				   fornewworkonbadge1.setKey(userStatusDetailsKey);
+			       fornewworkonbadge1.setStatus("working on");
+			       fornewworkonbadge1.setTypeRequested(badgeType);
+			       fornewworkonbadge1.setUserId(userid);
+			       fornewworkonbadge1.setCompanyId((String)lsession.getAttribute("companyKey"));
+			       fornewworkonbadge1.setDateAdded(now);
+			       fornewworkonbadge1.setStuffid(badgeid);
+			       UserStatusDetailsDAO.saveUserStatusDetails(fornewworkonbadge1);
+			   } 
 		}
 	
 	@RequestMapping(value="/facebookOauthCallback" , method=RequestMethod.GET)
@@ -797,8 +790,8 @@ public class UserProfilePageController extends HttpServlet{
 				userDetialsObject.setcompanyName(companyName);
 				userDetialsObject.setLoginTime(now);
 				
-				persistenceInstance.makePersistent(userDetialsObject);
 				
+				UserProfileDAO.saveUserProfile(userDetialsObject);
 		        respUserDetails.put(userKey, userDetialsObject);
 			
 						      
@@ -813,6 +806,8 @@ public class UserProfilePageController extends HttpServlet{
 				session.setAttribute("userFirstName",firstName);
 				session.setAttribute("userLastName", lastName);
 				session.setAttribute("userImage",profileImage);
+				
+				session.setAttribute("signinFlagFirst",null);
 			}
 			else
 			{
@@ -878,6 +873,8 @@ public class UserProfilePageController extends HttpServlet{
 				session.setAttribute("userFirstName",firstName);
 				session.setAttribute("userLastName", lastName);
 				session.setAttribute("userImage",profileImage);
+				
+				session.setAttribute("signinFlagFirst",null);
 			}
 						
 						
@@ -899,27 +896,11 @@ public class UserProfilePageController extends HttpServlet{
 	{
 		String referrerUrl				= req.getHeader("referer");
 		
-		System.out.println("referrerUrl : "+referrerUrl);
+		log.info("referrerUrl : "+referrerUrl);
 		
 		if( referrerUrl.contains("adaptiveyou.com") || referrerUrl.contains("localhost") || referrerUrl.contains("adaptivecourse.appspot.com") )
 		{
 			
 		}
-	}
-	@RequestMapping(value = "/store")
-	public String storePage(HttpServletRequest request,
-			HttpServletResponse response) {
-		AdaptiveYouDAO adaptiveDAO = new AdaptiveYouoDataStore();
-		String companyIDFromSession  = (String) request.getSession().getAttribute("companyKey");
-		String userKey = (String)request.getSession().getAttribute("userKeyLogin");
-		String emailId =(String)request.getSession().getAttribute("userEmailid");
-		System.out.println("test comnig here"+companyIDFromSession+" "+userKey+" "+emailId);
-		  UserProfilePage usrprofilepage=new UserProfilePage();
-			try {
-				usrprofilepage.userProfileService(companyIDFromSession,userKey,emailId,request);
-			} catch (Exception e) {
-				System.out.println("exception occured at while navigating to store page");	
-			}
-		return "store";
 	}
 }

@@ -119,7 +119,7 @@ $(document).ready(function()
 									buildEarnBadges += '<small class="badgeDiscription"><p>'+String(badgesListMap[indexBadgesListMap].badgeDiscription.value).substring(0,110)+'</p></small>'
 								buildEarnBadges +='</div></div>';
 							}
-						else if((String(userstatusdetails[indexUserStatusDetailsInfo].userId).indexOf(userKey) != -1 && String(userstatusdetails[indexUserStatusDetailsInfo].stuffid).indexOf(indexBadgesListMap) !=-1 && String(userstatusdetails[indexUserStatusDetailsInfo].status).indexOf("approved") !=-1 ))
+						else if((String(userstatusdetails[indexUserStatusDetailsInfo].userId).indexOf(userKey) != -1 && (String(userstatusdetails[indexUserStatusDetailsInfo].stuffid).indexOf(indexBadgesListMap) !=-1) && String(userstatusdetails[indexUserStatusDetailsInfo].status).indexOf("approved") !=-1 ))
 						{
 							buildEarnBadges += '<div id="'+indexBadgesListMap+'" class="span3 badge-thumb-wrap badgeParentDiv">'+
 							   ' <div class="well">'+
@@ -130,7 +130,9 @@ $(document).ready(function()
 							    		  '<ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">'+
 							    		   '<li><a id="'+indexBadgesListMap+'" class="all_badge view_details">View Details</a></li>';
 											if(String(badgesListMap[indexBadgesListMap].canEarnedTwice).indexOf("true") != -1)
-												buildEarnBadges +='<li><a id="'+indexBadgesListMap+'_'+indexUserStatusDetailsInfo+'" class="work_on_badge">Work on this badge</a></li>';
+												{
+													buildEarnBadges +='<li><a id="'+indexBadgesListMap+'_'+indexUserStatusDetailsInfo+'" class="work_on_badge">Work on this badge</a></li>';
+												}
 								buildEarnBadges +='</ul></div><div class="badge-img">'+
 								'<a ><img id="'+indexBadgesListMap+'_'+indexUserStatusDetailsInfo+'" style="cursor:pointer" class="all_badge" src="'+badgesListMap[indexBadgesListMap].badgeLogoPath+'"></a>'+
 							'</div>'+

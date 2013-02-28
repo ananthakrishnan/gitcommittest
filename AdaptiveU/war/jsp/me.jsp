@@ -166,19 +166,93 @@ bg_tit{
   z-index: 100!important;
 }
 
+.popup_class{
+height: 350px;
+position: absolute;
+margin: 99px 359px 99px 359px;
+width: 520px;
+top: 4%;
+left:5%;
+background: #fff url(../images/inner_banner_bg.gif) repeat-x 0px -190px;
+border: 1px solid #aaa;
+padding: 30px 50px 10px;
+-moz-box-shadow: 0px 0px 10px #ccc;
+-webkit-box-shadow: 0px 0px 10px #ccc;
+z-index: 9999;
+} 
+.popup_class h1 {
+	font-size: 28px;
+	font-weight: 600;
+	margin-bottom: 60px;
+}
+.popup_class ul, .popup_class ul li {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.popup_class ul li {
+	width: 520px;
+	margin-bottom: 5px;
+}
+.popup_class label {
+font-size: 16px;
+width: 118px;
+display: block;
+float: right;
+line-height: 38px;
+color: #999;
+}
+.popup_class input {
+height: 35px;
+width: 380px;
+padding: 0 5px;
+float: right;
+font-size: 16px;
+border: solid 1px #bbb;
+background: url(../images/form-bg-blur.gif) repeat-x 0px -1px;
+margin-bottom: 5px;
+}
+.popup_class input[type=text]:focus, .popup_class input[type=password]:focus {
+	border: 1px solid #1490E7;
+    box-shadow: 0 0 3px #1490E7;
+    background: url(../images/form-bg.gif) repeat-x 0px 0px;
+}
+.popup_class input:focus + label {
+	color: #000;
+	background: url(../images/label-arrow.gif) no-repeat 85px 13px;}
+.popup_class span.sub-label {
+	padding: 5px 0 20px 118px;
+	display: block;
+	color: #999;
+	font-weight: normal;
+}
+#login_form ul li input#create_account {
+	background: url(../images/medium-cta.png) no-repeat;
+	height: 55px;
+	padding-bottom: 5px;
+	width: 266px;
+	color: #ffffff;
+	font-size: 15px;
+	text-transform:uppercase;
+	float: right;
+	text-align: center;
+	padding-left:10px;
+	text-shadow: 0px -1px 0px #349b20;
+	display: block;
+	margin: 20px 0px 50px;
+	border: none;
+	font-weight: bold;
+	cursor: pointer;
+	cursor: hand;
+}
+#login_form ul li input#create_account:hover {
+	background: url(../images/medium-cta.png) 0px -56px no-repeat;
+}
+#login_form ul li input#create_account:active {
+background: url(../images/medium-cta.png) 0px -112px no-repeat;
+}
+
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -254,6 +328,9 @@ bg_tit{
 	%>
 
 <script type="text/javascript">
+
+	
+
 	var oauthFirstName 			= '<%= firstName %>';
 	var oauthLastName 			= '<%= lastName %>';
 	var userFirstName 			= '<%= firstName%>';
@@ -987,6 +1064,43 @@ bg_tit{
 
 		<div class="clear_all"></div>
 	</div>
+	
+	<div id="form_wrapper" class="popup_class" style="display: none;">
+			
+					
+				<h1>Enter Your Company Name</h1>
+				
+				<form method="get" id="create_account" name="login_form"  action="###" >
+					<ul>
+						<li>
+							<input type="text" readonly="" value="Saranya Shanmugavel" id="name" name="name">
+							<label for="name" style="position: relative;margin-top:-10px;">Name</label>
+						</li>
+						
+						<li>
+							<input type="text" readonly="" value="saranya.shanmugavel@a-cti.com" id="user_email" name="user_email">
+							<label for="email" style="position: relative;margin-top:-10px;">Email</label>
+						</li>
+						
+						<li>
+							<input type="text" value="" id="user_company" name="user_company">
+							<label for="company" style="position: relative;margin-top:-10px;">Company</label>
+						
+						</li>
+						
+					
+						
+						<li>
+							<input type="submit" value="CREATE MY COMPANY »" >
+						</li>
+					</ul>
+				</form>
+				
+				<div class="clear_all"></div>
+			</div>
+	
+	
+	
 
 <!-- LoopTodo Feedback Form Code -->
 <!-- <script id="looptodo_loop_embed_code" type="text/javascript" src="http://my.loopto.do/form/js/loop-embed-code.js?loopKey=agtzfmxvb3BhYmFja3IMCxIETG9vcBjZ4g4M&domain=my.loopto.do">

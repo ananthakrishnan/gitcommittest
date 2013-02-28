@@ -162,6 +162,7 @@
 $(document).ready(function() 
 {
 	
+	
 	$(window).bind('hashchange',function(e)
 	{
 		console.log("comes here"+String(e.originalEvent.newURL));
@@ -584,6 +585,22 @@ $(document).ready(function()
 
 $(document).ready(function() 
 {
+	
+	$("#create_account").live("submit",function(){
+		
+		$.ajax({
+			url 	: 	'/createCompany',
+			type	: 	'GET',
+			data	: 	$("#create_account").serialize(),
+			async	: 	false,
+			success : 	function(data)
+					 	{
+							window.location.href=window.location.href;
+						}
+		});
+		
+		
+	});
 	$(".user_info").hover(
 			function()
 			{
@@ -635,6 +652,20 @@ $(document).ready(function()
 			}
 		
 	  }
+	
+	if(String(userDetails[userKey].companyName) === "" && String(userDetails[userKey].type) === "Company")
+	{
+		console.log("in")
+		$("#backgroundPopup,#form_wrapper").fadeIn();
+		$("#backgroundPopup").css({"position":"fixed"});
+		
+		return false;
+	}
+	else
+	{
+		$("#form_wrapper").remove();
+		history.pushState(new Object,"Me","/persistUser");
+	}	
 	
 	
 	//Update for userBadgeLogJdo
@@ -911,6 +942,8 @@ $(document).ready(function()
 			{
 				$("#earnbadges").trigger("click");
 			}	
+			
+			
 	});
 
 	

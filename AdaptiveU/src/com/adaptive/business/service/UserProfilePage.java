@@ -21,13 +21,20 @@ import com.acti.jdo.ManageTeamJdo;
 import com.acti.jdo.PMF;
 import com.acti.jdo.UserBadgeLogJdo;
 import com.adaptive.business.dao.AdaptiveYouDAO;
+import com.adaptive.business.dao.AuctionListDAO;
+import com.adaptive.business.dao.BadgeListDAO;
+import com.adaptive.business.dao.ManageTeamDAO;
+import com.adaptive.business.dao.UserBadgeLogDAO;
+import com.adaptive.business.dao.UserProfileDAO;
+import com.adaptive.business.dao.UserStatusDetailsDAO;
+import com.adaptive.business.dao.videodetailsDAO;
 
 public class UserProfilePage {
 	
 	
 	public void userProfileService(String compId ,String userKey,String emailId,HttpServletRequest req) throws JsonGenerationException, JsonMappingException, IOException
 	{
-		   AdaptiveYouDAO adaptiveDAO = new AdaptiveYouoDataStore();
+		   
 		   PersistenceManager pmAddToTeam = PMF.get().getPersistenceManager();
 		   PersistenceManager pmBatchDetails = PMF.get().getPersistenceManager();
 		   Date now = new Date();
@@ -36,15 +43,15 @@ public class UserProfilePage {
 		   objMapper.configure( JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES , true );
 		   objMapper.configure( DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES , false );
 		
-		   String badgesListMap = adaptiveDAO.getDataFromBadgeListTable(compId);
+		   String badgesListMap = BadgeListDAO.getDataFromBadgeListTable(compId);
 		   req.setAttribute("badgesListMap",badgesListMap);
-		   String videodetailsMap= adaptiveDAO.getDataFromVideoDetails(compId);
+		   String videodetailsMap= videodetailsDAO.getDataFromVideoDetails(compId);
 		   req.setAttribute("videoDetailsMap",videodetailsMap);
-		   String userProfileMap =  adaptiveDAO.getDataFromUserProfile(compId);
+		   String userProfileMap =  UserProfileDAO.getDataFromUserProfile(compId);
 		   req.setAttribute("userProfileMap",userProfileMap);
-		   String userStatusDetailsMap =  adaptiveDAO.getDataFromUserStatusDetails(compId);
+		   String userStatusDetailsMap =  UserStatusDetailsDAO.getDataFromUserStatusDetails(compId);
 		   req.setAttribute("userStatusDetailsMap",userStatusDetailsMap);
-		   String auctionListMap = adaptiveDAO.getDataFromAuctionListTable(compId);
+		   String auctionListMap = AuctionListDAO.getDataFromAuctionListTable(compId);
 		   req.setAttribute("auctionListMap",auctionListMap);
 		  
 		   
@@ -73,7 +80,7 @@ public class UserProfilePage {
 				{
 					e.printStackTrace();
 				}
-				 String userBadgeLogJdoMap =  adaptiveDAO.getDataFromUserBadgeLogJdo(compId);
+				 String userBadgeLogJdoMap =  UserBadgeLogDAO.getDataFromUserBadgeLogJdo(compId);
 				 req.setAttribute("userBadgeLogJdoMap",userBadgeLogJdoMap);
 		   
 		
@@ -111,7 +118,7 @@ public class UserProfilePage {
 		       teamMem.add(userKey);
 		       groupInfo.setTeamMembers(teamMem);
 		       groupInfo.setTeamName("AllTeam");
-		       pmAddToTeam.makePersistent(groupInfo);
+		      ManageTeamDAO.saveManageTeamJdo(groupInfo);
 	      }
 					
 					//Changes has to be done

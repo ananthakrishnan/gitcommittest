@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -35,6 +36,9 @@ import com.acti.jdo.UserProfile;
 import com.acti.jdo.UserStatusDetails;
 import com.acti.jdo.videodetails;
 import com.adaptive.business.dao.AdaptiveYouDAO;
+import com.adaptive.business.dao.UserProfileDAO;
+import com.adaptive.business.dao.UserStatusDetailsDAO;
+import com.adaptive.business.dao.videodetailsDAO;
 import com.adaptive.business.service.AdaptiveYouServiceMethods;
 import com.adaptive.business.service.AdaptiveYouoDataStore;
 import com.google.appengine.api.users.UserService;
@@ -43,13 +47,13 @@ import com.google.appengine.api.users.UserServiceFactory;
 @Controller
 public class AdminController extends HttpServlet
 {
-	
+	private static final Logger log = Logger.getLogger(AdminController.class.getName());
 	@RequestMapping(value="/*.do/*" , method=RequestMethod.GET)
 	public  String  workingOnBadgesRemotely(HttpServletRequest request, HttpServletResponse response , HttpSession session ) throws JsonGenerationException, JsonMappingException, IOException, JSONException
 	{
 		
 		
-		System.out.println("getServletPath ::"+request.getServletPath() +" emailIdDuringRemoteSession ::"+session.getAttribute("emailIdDuringRemoteSession"));
+		log.info("getServletPath ::"+request.getServletPath() +" emailIdDuringRemoteSession ::"+session.getAttribute("emailIdDuringRemoteSession"));
 		
 		String companyWithBadge 		= request.getServletPath();
 		String companyNameRemote 		= null;
@@ -68,18 +72,18 @@ public class AdminController extends HttpServlet
 					 badgeNameRemote =companyWithBadge.split("/")[2];
 					 if(!("images".equalsIgnoreCase(companyNameRemote)))
 					 {
-						 System.out.println("companyNameRemote ::"+companyNameRemote + " badgeNameRemote ::"+badgeNameRemote );
+						 log.info("companyNameRemote ::"+companyNameRemote + " badgeNameRemote ::"+badgeNameRemote );
 						 companyIdRemote = adaptiveYouService.getCompanyIdFromCompanyName(companyNameRemote);
 						 if(companyIdRemote != null)
 						 {
 							badgeIdRemote = adaptiveYouService.getBadgeIdFromBadgeName(badgeNameRemote,companyIdRemote);
-							System.out.println("badgeIdRemote ::"+badgeIdRemote);
+							log.info("badgeIdRemote ::"+badgeIdRemote);
 							session.setAttribute("badgeIdRemote",badgeIdRemote);
 							session.setAttribute("companyIdRemote",companyIdRemote);
 							session.setAttribute("badgeNameRemote",badgeNameRemote);
 							session.setAttribute("companyNameRemote",companyNameRemote);
-							System.out.println("badgeIdRemote  session::"+(String)session.getAttribute("badgeIdRemote"));
-							System.out.println("companyIdRemote  session::"+(String)session.getAttribute("companyIdRemote"));
+							log.info("badgeIdRemote  session::"+(String)session.getAttribute("badgeIdRemote"));
+							log.info("companyIdRemote  session::"+(String)session.getAttribute("companyIdRemote"));
 						 }
 						 else
 							return "error";
@@ -96,7 +100,7 @@ public class AdminController extends HttpServlet
 					{
 						HomePageController homePage = new HomePageController();
 						session.setAttribute("workingRemotelyIsActive", "workingRemotelyIsActive");
-						System.out.println("After setting the session ::"+session.getAttribute("workingRemotelyIsActive"));
+						log.info("After setting the session ::"+session.getAttribute("workingRemotelyIsActive"));
 						
 						homePage.openId(request,response);
 					}
@@ -122,9 +126,9 @@ public class AdminController extends HttpServlet
 				if(badgeIdRemote != null && companyIdRemote != null)
 				{
 					
-					System.out.println("It comes to else where badgeIdRemote and companyIdRemote is not null");
+					log.info("It comes to else where badgeIdRemote and companyIdRemote is not null");
 
-					System.out.println("emailId ::"+emailId+" companyIdRemote ::"+companyIdRemote);
+					log.info("emailId ::"+emailId+" companyIdRemote ::"+companyIdRemote);
 					
 					
 					String userId													= "";
@@ -154,7 +158,7 @@ public class AdminController extends HttpServlet
 					String userProfileMapByCompany 									= "";
 					String userStatusDetailsMapByCompany 							= "";
 					String badgesMapByCompany 										= "";
-					AdaptiveYouDAO adaptiveDAO 										= new AdaptiveYouoDataStore();
+					
 					
 					Query queryforbadgeslilsttable 									= pmForBadgesListTable.newQuery(BadgesList.class,"companyId == '"+companyIdRemote+"' && key == '"+badgeIdRemote+"'");         
 					List<BadgesList> badgesListData 								= (List<BadgesList>)queryforbadgeslilsttable.execute();
@@ -183,20 +187,20 @@ public class AdminController extends HttpServlet
 							
 							AdaptiveYouServiceMethods lserviceMethod = new AdaptiveYouServiceMethods();
 							 userProfileMapByCompany = lserviceMethod.getDataFromUserProfile(companyIdRemote, emailId);
-							System.out.println("userProfileInfo ::"+userProfileMapByCompany+ " emailId::"+emailId);
+							log.info("userProfileInfo ::"+userProfileMapByCompany+ " emailId::"+emailId);
 							if( !("{}".equalsIgnoreCase(userProfileMapByCompany)) && userProfileMapByCompany != null)
 							{
 								JSONObject userProfile  = new JSONObject(userProfileMapByCompany);
-								System.out.println("userProfile ::"+userProfile.toString());
+								log.info("userProfile ::"+userProfile.toString());
 								userProfileInfo = userProfile.getJSONObject(emailId);
 								userId = userProfileInfo.getString("key");
-								System.out.println("userId ::"+userId);
+								log.info("userId ::"+userId);
 								badgesMapByCompany 										= objMapper.writeValueAsString(badgesMap);
 								request.setAttribute("badgesMapByCompany", badgesMapByCompany);
 								request.setAttribute("userProfileMapByCompany",userProfileMapByCompany);
 								
 								 userStatusDetailsMapByCompany = lserviceMethod.getDataFromUserStatusDetails(companyIdRemote,userId,badgeIdRemote);
-								System.out.println("userStatusDetailsMapByCompany "+userStatusDetailsMapByCompany);
+								log.info("userStatusDetailsMapByCompany "+userStatusDetailsMapByCompany);
 								
 								if(!("{}".equalsIgnoreCase(userStatusDetailsMapByCompany) && userStatusDetailsMapByCompany != null))
 								{
@@ -220,8 +224,9 @@ public class AdminController extends HttpServlet
 									userStatusDetailsInstance.setTypeRequested(badgeType);
 									userStatusDetailsInstance.setUserId(userId);
 									userStatusDetailsInstance.setVideostatus(videoStatusList);
+									UserStatusDetailsDAO.saveUserStatusDetails(userStatusDetailsInstance);
 									
-									instanceForUserStatusDetails.makePersistent(userStatusDetailsInstance);
+									
 									
 									userStatusDetailsMap.put(key.toString(), userStatusDetailsInstance);
 									
@@ -236,13 +241,13 @@ public class AdminController extends HttpServlet
 								Query queryforbadgelogjdo				 				= pmForBadgeLogJdo.newQuery(UserBadgeLogJdo.class,"companyId == '"+companyIdRemote+"' && userId == '"+userId+"'");         
 								List<UserBadgeLogJdo> badgelogjdoData 					= (List<UserBadgeLogJdo>)queryforbadgelogjdo.execute();
 								if(badgelogjdoData != null)
-									System.out.println("badgelogjdoData ::"+badgelogjdoData.size());
+									log.info("badgelogjdoData ::"+badgelogjdoData.size());
 								
 								if(!(badgelogjdoData.isEmpty()) && badgelogjdoData != null && badgelogjdoData.size() > 0)
 								{
 									for(UserBadgeLogJdo iteratingUserBadgeLog : badgelogjdoData)
 									{
-										System.out.println("badgeType ::"+badgeType);
+										log.info("badgeType ::"+badgeType);
 										if(badgeType.equals("badge"))
 										{
 											badgeOrTrophyWorkingOn 						= iteratingUserBadgeLog.getBadgesWorkingOn();
@@ -282,7 +287,7 @@ public class AdminController extends HttpServlet
 								
 								if(videoBadgeOrNonVideoBadge)
 								{
-									String videodetailsMap= adaptiveDAO.getDataFromVideoDetails(companyIdRemote);
+									String videodetailsMap= videodetailsDAO.getDataFromVideoDetails(companyIdRemote);
 									request.setAttribute("videoDetailsMapByCompany",videodetailsMap);
 								}
 								
@@ -317,7 +322,7 @@ public class AdminController extends HttpServlet
 		String userEmailId												= (String)session.getAttribute("userEmailId");
 		String requestedCompanyId										= (String)session.getAttribute("requestedCompanyId");
 		
-		System.out.println(userEmailId+" "+requestedCompanyId);
+		log.info(userEmailId+" "+requestedCompanyId);
 		
 		PersistenceManager instanceForUserDetails 						= PMF.get().getPersistenceManager();
 		
@@ -325,7 +330,7 @@ public class AdminController extends HttpServlet
 		
 		List<UserProfile> userProfileDetailsList						= (List<UserProfile>) queryUserDetails.execute();
 		
-		System.out.println(userProfileDetailsList);
+		log.info(userProfileDetailsList+"");
 		
 		if(userProfileDetailsList != null && userProfileDetailsList.size() > 0)
 		{
@@ -350,8 +355,9 @@ public class AdminController extends HttpServlet
 			userProfileInstance.setLastName((String) session.getAttribute("lastNameFirst"));
 			userProfileInstance.setcompanyName(userProfileDetails.getcompanyName());
 			userProfileInstance.setType("requested");
+			UserProfileDAO.saveUserProfile(userProfileInstance);
 			
-			userDetailsObject.makePersistent(userProfileInstance);
+			
 			
 			return "<p>Great news, the request is sent.</p>"+
     		"<p>Soon , you will get an email notification regarding you request and you will be able to get started..</p> ";
@@ -385,7 +391,7 @@ public class AdminController extends HttpServlet
 				userProfileInstance.setType("user");
 				userProfileInstance.setCmsKey(cmsKeyForNewUser);
 				
-				instanceForUserDetails.makePersistent(userProfileInstance);
+				UserProfileDAO.saveUserProfile(userProfileInstance);
 				
 				persistenceInstance.close();
 			}
@@ -407,7 +413,7 @@ public class AdminController extends HttpServlet
 //	@RequestMapping(value="/sessionKiller" , method=RequestMethod.POST)
 //	public void  sessionKiller(HttpServletRequest request, HttpServletResponse response , HttpSession session ) throws IOException, JSONException, ServletException
 //	{
-//		System.out.println("session killer");
+//		log.info("session killer");
 //		session.invalidate();
 //	}
 	

@@ -39,6 +39,7 @@ import com.acti.jdo.PMF;
 import com.acti.jdo.UserBadgeLogJdo;
 import com.acti.jdo.UserProfile;
 import com.acti.jdo.UserStatusDetails;
+import com.adaptive.business.dao.ManageTeamDAO;
 import com.adaptive.business.service.ManageTeamServiceMethod;
 //import com.google.gdata.client.contacts.ContactsService;
 //import com.google.gdata.data.contacts.ContactEntry;
@@ -51,7 +52,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class ManageTeamPageController  extends HttpServlet
 {
-	private static final Logger log = Logger.getLogger(ManageGroups.class.getName());
+	private static final Logger log = Logger.getLogger(ManageTeamPageController.class.getName());
 	@RequestMapping(value="/manageTeam" , method=RequestMethod.GET)
 	protected String manageTeam(HttpServletRequest request,HttpServletResponse response) throws JsonGenerationException, JsonMappingException, IOException
 	{
@@ -68,13 +69,6 @@ public class ManageTeamPageController  extends HttpServlet
 		PersistenceManager pmDeleteTeam 			= PMF.get().getPersistenceManager();
 		HttpSession session 						= request.getSession();
 		String companyId 							= (String) session.getAttribute("companyKey");
-		
-		if(session.getAttribute("detachingCompanyId") != null)
-		{
-			companyId								= (String) session.getAttribute("detachingCompanyId");
-			
-			session.setAttribute("detachingCompanyId", null);
-		}
 		ArrayList<String> newTeamMems 				= new ArrayList<String>();
 		if(teamName.equals("AllTeam"))
 		{
@@ -153,55 +147,6 @@ public class ManageTeamPageController  extends HttpServlet
 		}
 	}
 	
-	@RequestMapping(value="/detachFromCompany" , method=RequestMethod.GET)
-	protected void detachFromCompany(@RequestParam(value="detachingCompanyId", required=false) String detachingCompanyId,HttpServletRequest request,HttpServletResponse response) throws IOException
-	{
-		System.out.println("detachingCompanyId :: "+detachingCompanyId);
-		HttpSession session 			= request.getSession();
-		String userKey					= (String) session.getAttribute("userKeyLogin");
-		session.setAttribute("detachingCompanyId", detachingCompanyId);
-		
-		this.deleteTeamMem(userKey, "AllTeam", request, response);
-	}
-	
-	@RequestMapping(value="/hideFromOthers" , method=RequestMethod.GET)
-	protected void hideFromOthers(@RequestParam(value="hidingCompanyId", required=false) String hidingCompanyId,@RequestParam(value="access_specifier", required=false) String access_specifier,HttpServletRequest request,HttpServletResponse response) throws IOException
-	{
-		PersistenceManager hideTheUser		 	= PMF.get().getPersistenceManager();
-		System.out.println("hideFromOthers :: "+hidingCompanyId);
-		
-		HttpSession session 					= request.getSession();
-		String userKey							= (String) session.getAttribute("userKeyLogin");
-		
-		UserProfile userProfileInstance			= null;
-		
-		try 
-		{
-			 userProfileInstance				= hideTheUser.getObjectById(UserProfile.class,userKey);
-			 
-			 if(userProfileInstance != null && access_specifier != null)
-			 {
-				   if(access_specifier.equals("public"))
-				   {
-					   userProfileInstance.setProfileAccess("private");
-				   }
-				   else if(access_specifier.equals("private"))
-				   {
-					   userProfileInstance.setProfileAccess("public");
-				   }
-				   hideTheUser.makePersistent(userProfileInstance);
-			}
-		}
-		catch(Exception e)
-		{
-			System.out.println("exception");
-		}
-		finally
-		{
-			hideTheUser.close();
-		}
-	}
-	
 	@RequestMapping(value="/changeStatusOfUser" , method=RequestMethod.GET)
 	protected void editStatusOfUser(@RequestParam(value="status", required=false) String status,@RequestParam(value="userKey", required=false) String userKey,HttpServletRequest request,HttpServletResponse response)
 	{
@@ -243,7 +188,7 @@ public class ManageTeamPageController  extends HttpServlet
 			addNew.setKey(newTeamId.toString());
 			addNew.setTeamOrder(Integer.parseInt(teamOrder));
 			addNew.setDeleteFlag("false");
-			pmAddNewTeam.makePersistent(addNew);
+			ManageTeamDAO.saveManageTeamJdo(addNew);
 			response.setContentType("text/html");
 			response.getWriter().print(newTeamId.toString());
 		}
@@ -351,7 +296,7 @@ public class ManageTeamPageController  extends HttpServlet
 					}
 				}
 			}
-			System.out.println("validEmailIds.toString() "+validEmailIds.toString().replace("[","").replace("]", ""));
+			log.info("validEmailIds.toString() "+validEmailIds.toString().replace("[","").replace("]", ""));
 			mail.sendMailToNewUser(validEmailIds.toString().replace("[","").replace("]",""),firstName,lastName);
 	  
 	  }
@@ -377,14 +322,14 @@ public class ManageTeamPageController  extends HttpServlet
 //		      BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 //		      while ((inputLine = reader.readLine()) != null)
 //				{		
-//		    	  System.out.println("inputLine ::"+inputLine);
+//		    	  log.info("inputLine ::"+inputLine);
 //		    	  inputToJson += inputLine;
 //				}
 //		  
 //		      response.setContentType("application/json");
 //				PrintWriter out = response.getWriter();
 //				out.print(inputToJson);
-//		      System.out.println("inputToJson ::"+inputToJson);
+//		      log.info("inputToJson ::"+inputToJson);
 //		    
 //		      conn.disconnect();
 //		      }
@@ -399,7 +344,7 @@ public class ManageTeamPageController  extends HttpServlet
 	{
 		
 		HttpSession session 						= req.getSession();
-		System.out.println("comes inside"+session.getAttribute("emailIdFirst").toString());
+		log.info("comes inside"+session.getAttribute("emailIdFirst").toString());
 		
 		try
 		{
@@ -413,7 +358,7 @@ public class ManageTeamPageController  extends HttpServlet
 			myService.setHeader("Authorization", "OAuth "+accestokenString);
 			myService.setHeader("GData-Version","3.0");
 			
-			System.out.println("Email id :: "+userEmailId);
+			log.info("Email id :: "+userEmailId);
 			
 			URL feedUrl 								= new URL("https://www.google.com/m8/feeds/contacts/"+userEmailId+"/full?access_token="+accestokenString);
 			
@@ -454,7 +399,7 @@ public class ManageTeamPageController  extends HttpServlet
 				contactsListMap.put(emailAddress, userFullName);
 			}
 			
-			System.out.println("contactsListMap :: "+contactsListMap.size()+" "+contactsListMap);
+			log.info("contactsListMap :: "+contactsListMap.size()+" "+contactsListMap);
 			
 			response.setContentType("application/json");
 			response.getWriter().println(objMapper.writeValueAsString(contactsListMap));

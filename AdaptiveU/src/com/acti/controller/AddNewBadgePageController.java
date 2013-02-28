@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -49,6 +50,8 @@ import com.acti.jdo.UserBadgeLogJdo;
 import com.acti.jdo.UserProfile;
 import com.acti.jdo.UserStatusDetails;
 import com.acti.jdo.videodetails;
+import com.adaptive.business.dao.BadgeListDAO;
+import com.adaptive.business.dao.videodetailsDAO;
 import com.adaptive.business.service.AddNewBadgeServiceMethod;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobKey;
@@ -70,6 +73,7 @@ import com.google.appengine.api.memcache.MemcacheServiceFactory;
 @Controller
 public class AddNewBadgePageController extends HttpServlet 
 {
+	private static final Logger log = Logger.getLogger(AddNewBadgePageController.class.getName());
 	private BlobstoreService blobstoreService=BlobstoreServiceFactory.getBlobstoreService();
 	ResourceBundle lResourceBundle = ResourceBundle.getBundle("ApplicationResources");
 	@RequestMapping("/addNewBadge")
@@ -144,7 +148,6 @@ public class AddNewBadgePageController extends HttpServlet
 	 {
 		 PersistenceManager pm_get       					= PMF.get().getPersistenceManager();
 		 BadgesList setDelete        						= pm_get.getObjectById(BadgesList.class, deletingBadgeKey);
-		 
 		 String badgeType        							= setDelete.getbadgeType();
 		 
 		 setDelete.setbadgeType("deleted "+badgeType);
@@ -246,11 +249,11 @@ public class AddNewBadgePageController extends HttpServlet
 			 }
 			 catch (NullPointerException e) 
 			 {
-				System.out.println("Null pointer Exception");
+				log.warning("Null pointer Exception");
 			 }
 			 catch (Exception e) 
 			 {
-				 System.out.println("Not a  Null pointer Exception");
+				 log.warning("Not a  Null pointer Exception");
 			 }
 			 
 			 Query queryAuctionParticipants								= persisenceInstance2.newQuery(AuctionParticipants.class,"auctionId == '"+deletingAuctionKey+"'");
@@ -274,7 +277,7 @@ public class AddNewBadgePageController extends HttpServlet
 		 }
 		 catch (Exception e) 
 		 {
-			System.out.println("Exception in DeleteAuctionDetails");
+			log.warning("Exception in DeleteAuctionDetails");
 		 }
 		 finally
 		 {
@@ -337,12 +340,7 @@ public class AddNewBadgePageController extends HttpServlet
 							videoDetailsInstance.setVideourl(videoObject.getString("Videourl"));
 							videoDetailsInstance.setVidtitle(videoObject.getString("vidtitle"));
 							
-							if(videoObject.has("videoDuration"))
-							{
-								videoDetailsInstance.setVideoDuration(videoObject.getString("videoDuration"));
-							}
-							
-							videoDetailsPMF.makePersistent(videoDetailsInstance);
+							videodetailsDAO.savevideodetails(videoDetailsInstance);
 							
 							videoKeysList.add(videoObject.getString("key"));
 							newVideoKeys.add(videoObject.getString("key"));
@@ -357,11 +355,6 @@ public class AddNewBadgePageController extends HttpServlet
 							videoDetailsList.setVidtitle(videoObject.getString("vidtitle"));
 							
 							editVideoDetailsPMF.makePersistent(videoDetailsList);
-							
-							if(videoObject.has("videoDuration"))
-							{
-								videoDetailsList.setVideoDuration(videoObject.getString("videoDuration"));
-							}
 							
 							videoKeysList.add(videoObject.getString("key"));
 							oldVideoKeys.add(videoObject.getString("key"));
@@ -623,8 +616,7 @@ public class AddNewBadgePageController extends HttpServlet
 						
 						userBadgeDetails.setBadgeImageBlobkey(badgeDetails.getString("badgeImageBlobkey"));
 					}
-					
-					persistenceObject.makePersistent(userBadgeDetails);
+					BadgeListDAO.saveAuctionTransactions(userBadgeDetails);
 					persistenceObject.close();
 					
 					
@@ -683,8 +675,8 @@ public class AddNewBadgePageController extends HttpServlet
 							badgesListInstance.setQunatity(Integer.parseInt(badgeDetails.getString("maximumQuantity")));
 						}
 					}
+					BadgeListDAO.saveAuctionTransactions(badgesListInstance);
 					
-					persistenceObject.makePersistent(badgesListInstance);
 					persistenceObject.close();
 					
 					response.setContentType("text/plain");
@@ -694,7 +686,7 @@ public class AddNewBadgePageController extends HttpServlet
 		}
 		catch(Exception e)
 		{
-			System.out.println("Exception occured in SaveBadgeDetails");
+			log.warning("Exception occured in SaveBadgeDetails");
 		}
 	}
 	
@@ -717,7 +709,7 @@ public class AddNewBadgePageController extends HttpServlet
 
 				request.setAttribute("badge_imageUrl", imageURL);
 				response.setContentType("text/html");
-				out.println(imageURL);
+				log.info(imageURL);
 			}
 		}
 

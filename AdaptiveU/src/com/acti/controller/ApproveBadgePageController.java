@@ -25,6 +25,7 @@ import com.acti.jdo.PMF;
 import com.acti.jdo.UserBadgeLogJdo;
 import com.acti.jdo.UserProfile;
 import com.acti.jdo.UserStatusDetails;
+import com.adaptive.business.dao.UserStatusDetailsDAO;
 import com.adaptive.business.service.ApproveBadgePage;
 import com.google.appengine.api.datastore.Text;
 
@@ -300,7 +301,7 @@ public class ApproveBadgePageController extends HttpServlet {
 						addNewUser.setCompanyId((String)(session.getAttribute("companyKey")));
 						if(session.getAttribute("userKeyLogin") != null)
 							addNewUser.setBadgeAssignee((String)session.getAttribute("userKeyLogin"));
-						pmUpdateStuffInfo.makePersistent(addNewUser);
+						UserStatusDetailsDAO.saveUserStatusDetails(addNewUser);
 					}
 				}
 				catch(Exception e)
@@ -336,61 +337,52 @@ public class ApproveBadgePageController extends HttpServlet {
 	}
 	
 	@RequestMapping(value="/sendmailforrequestdenied" , method=RequestMethod.POST)
-	protected void requestforbadgedenied(@RequestParam(value="typeid", required=false) String typeid,@RequestParam(value="userKey", required=false) String userkey,@RequestParam(value="type", required=false) String type,@RequestParam(value="mailcontent", required=false) String mailcontent,@RequestParam(value="adminKey", required=false) String badgeAssignee,@RequestParam(value="userStatusDetailsKey", required=false) String  userStatusDetailsKey,HttpServletRequest request,HttpServletResponse response)
+	protected void requestforbadgedenied( @RequestParam(value="typeid", required=false) String typeid,@RequestParam(value="userKey", required=false) String userkey,@RequestParam(value="type", required=false) String type,@RequestParam(value="mailcontent", required=false) String mailcontent,@RequestParam(value="adminKey", required=false) String badgeAssignee,@RequestParam(value="userStatusDetailsKey", required=false) String  userStatusDetailsKey,HttpServletRequest request,HttpServletResponse response)
 	{
-		try
+		log.info("test from mailing service ");
+		PersistenceManager pmfrusercheck 				= PMF.get().getPersistenceManager();
+		PersistenceManager pmForBadgesListTable 		= PMF.get().getPersistenceManager();
+		Text mailcontent1								= new Text(mailcontent);
+		String usermailid								= "";
+		String badgename								= "";
+		HttpSession session 	= request.getSession();
+		String companyId        = (String)session.getAttribute("companyKey");
+		
+		   UUID uniqueKey         = UUID.randomUUID();
+		   UserStatusDetails declinedEntry     = new UserStatusDetails();
+		   declinedEntry.setKey(uniqueKey.toString());
+		   declinedEntry.setBadgeAssignee(badgeAssignee);
+		   declinedEntry.setCompanyId(companyId);
+		   declinedEntry.setStatus("declined");
+		   declinedEntry.setTypeRequested(type);
+		   declinedEntry.setUserId(userkey);
+		   declinedEntry.setBadgeReqContent(mailcontent);
+		   declinedEntry.setStuffid(typeid);
+		   declinedEntry.setDateApproved(new Date());
+		   declinedEntry.setUserStatusKey(userStatusDetailsKey);
+		   //pmForBadgesListTable.makePersistent(declinedEntry);
+		
+		   UserStatusDetailsDAO.saveUserStatusDetails(declinedEntry);
+		
+		Query queryUserDetails1	 						= pmfrusercheck.newQuery(UserProfile.class,"	key == '"+userkey+"'");
+		List<UserProfile> usersInfo1 					= (List<UserProfile>)queryUserDetails1.execute();
+		for(UserProfile usersInfoDetail: usersInfo1)
 		{
-			log.info("test from mailing service ");
-			PersistenceManager pmfrusercheck 				= PMF.get().getPersistenceManager();
-			PersistenceManager pmForBadgesListTable 		= PMF.get().getPersistenceManager();
+			usermailid									= usersInfoDetail.getuserName();
 			
-			Text mailcontent1								= new Text(mailcontent);
-			String usermailid								= "";
-			String badgename								= "";
-			HttpSession		session							= request.getSession();
-			String companyId								= (String)session.getAttribute("companyKey");
-			
-			//UserStatusDetails userStatusInfo				= 
-	
-			UUID uniqueKey									= UUID.randomUUID();
-			UserStatusDetails declinedEntry					= new UserStatusDetails();
-			declinedEntry.setKey(uniqueKey.toString());
-			declinedEntry.setBadgeAssignee(badgeAssignee);
-			declinedEntry.setCompanyId(companyId);
-			declinedEntry.setStatus("declined");
-			declinedEntry.setTypeRequested(type);
-			declinedEntry.setUserId(userkey);
-			declinedEntry.setBadgeReqContent(mailcontent);
-			declinedEntry.setStuffid(typeid);
-			declinedEntry.setDateApproved(new Date());
-			declinedEntry.setUserStatusKey(userStatusDetailsKey);
-			pmForBadgesListTable.makePersistent(declinedEntry);
-			
-			
-			pmForBadgesListTable 		= PMF.get().getPersistenceManager();
-			
-			Query queryUserDetails1	 						= pmfrusercheck.newQuery(UserProfile.class,"	key == '"+userkey+"'");
-			List<UserProfile> usersInfo1 					= (List<UserProfile>)queryUserDetails1.execute();
-			for(UserProfile usersInfoDetail: usersInfo1)
-			{
-				usermailid									= usersInfoDetail.getuserName();
-				
-			}
-			
-			
-			Query queryforbadgeslilsttable 					= pmForBadgesListTable.newQuery(BadgesList.class,"key == '"+typeid+"'");         
-			List<BadgesList> badgesListData 				= (List<BadgesList>)queryforbadgeslilsttable.execute();
-			for(BadgesList badgeslist:badgesListData){
-				badgename									= badgeslist.getBadgeName();
-			}
-			
-			MailingService ms								= new MailingService();
-			ms.sendMailfordenyingbadgeRequest(usermailid,mailcontent1,type,badgename);
 		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
+		
+		
+		
+		
+		Query queryforbadgeslilsttable 					= pmForBadgesListTable.newQuery(BadgesList.class,"key == '"+typeid+"'");         
+		List<BadgesList> badgesListData 				= (List<BadgesList>)queryforbadgeslilsttable.execute();
+		for(BadgesList badgeslist:badgesListData){
+			badgename									= badgeslist.getBadgeName();
 		}
+		
+		MailingService ms								= new MailingService();
+		ms.sendMailfordenyingbadgeRequest(usermailid,mailcontent1,type,badgename);
 	}
 	
 }

@@ -31,23 +31,12 @@ public class videodetails implements Serializable {
 	@Persistent
 	private String companyId;
 	
-	@Persistent
-	private String videoDuration;
-	
-	public String getVideoDuration() {
-		return videoDuration;
-	}
-	public void setVideoDuration(String videoDuration) {
-		this.videoDuration = videoDuration;
-	}
-	
 	public String getCompanyId() {
 		return companyId;
 	}
 	public void setCompanyId(String companyId) {
 		this.companyId = companyId;
 	}
-	
 	public String getKey() {
 		return key;
 	}

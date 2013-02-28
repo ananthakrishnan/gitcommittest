@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -27,6 +28,7 @@ import com.acti.jdo.UserProfile;
 
 public class CMSController 
 {
+	private static final Logger log = Logger.getLogger(CMSController.class.getName());
 	ResourceBundle lResourceBundle 					= ResourceBundle.getBundle("ApplicationResources");
 	String adaptiveYouAPIKey 						= "";
 	String cms_url					 				= "";
@@ -64,7 +66,7 @@ public class CMSController
 			dataToCRM.put("type", userProfile.getType());
 			
 			JSONObject crmReqData = new JSONObject(dataToCRM);
-			System.out.println("request data is" +crmReqData.toString());
+			log.info("request data is" +crmReqData.toString());
 			
 			InputStream output           = sendRequest(cms_url+"/services/data/v1.0/objects/Contact/?apikey="+adaptiveYouAPIKey, "POST", crmReqData);
 			BufferedReader br            = new BufferedReader(new InputStreamReader(output));
@@ -77,7 +79,7 @@ public class CMSController
 				while((temp=br.readLine())!=null) {
 					responseString += temp;
 				}
-				System.out.println("After receiving response "+responseString);
+				log.info("After receiving response "+responseString);
 				
 				if(!(responseString.equals("")))
 				{
@@ -90,9 +92,9 @@ public class CMSController
 						for(int i=0;i<contactsArray.length();i++)
 						{
 							JSONObject jsonContact = contactsArray.getJSONObject(i);
-							System.out.println("Contact ::"+jsonContact.getJSONArray("listPeople"));
+							log.info("Contact ::"+jsonContact.getJSONArray("listPeople"));
 							JSONArray jsonListPeopleArray = jsonContact.getJSONArray("listPeople");
-							System.out.println("listPeople ::"+jsonListPeopleArray.toString());
+							log.info("listPeople ::"+jsonListPeopleArray.toString());
 							for(int listPeople=0;listPeople < jsonListPeopleArray.length();listPeople++)
 							{
 								JSONObject jsonListPeople = jsonListPeopleArray.getJSONObject(i);
@@ -130,7 +132,7 @@ public class CMSController
 			dataToCRM.put("type", "contact");
 			
 			JSONObject crmReqData = new JSONObject(dataToCRM);
-			System.out.println("request data is" +crmReqData.toString());
+			log.info("request data is" +crmReqData.toString());
 			
 			InputStream output           = sendRequest(cms_url+"/services/data/v1.0/objects/Contact/"+compUniqueKey+"?apikey="+adaptiveYouAPIKey, "PUT", crmReqData);
 			BufferedReader br            = new BufferedReader(new InputStreamReader(output));
@@ -142,7 +144,7 @@ public class CMSController
 					responseString += temp;
 				}
 				
-				System.out.println("After receiving response "+responseString);
+				log.info("After receiving response "+responseString);
 				
 				if(!(responseString.equals("")))
 				{
@@ -153,9 +155,9 @@ public class CMSController
 					{
 						JSONObject jsonContact =jsonData.getJSONObject("contact");
 						
-							System.out.println("Contact ::"+jsonContact.getJSONArray("listPeople"));
+							log.info("Contact ::"+jsonContact.getJSONArray("listPeople"));
 							JSONArray jsonListPeopleArray = jsonContact.getJSONArray("listPeople");
-							System.out.println("listPeople ::"+jsonListPeopleArray.toString());
+							log.info("listPeople ::"+jsonListPeopleArray.toString());
 							for(int listPeople=0;listPeople < jsonListPeopleArray.length();listPeople++)
 							{
 								JSONObject jsonListPeople = jsonListPeopleArray.getJSONObject(listPeople);
@@ -176,7 +178,7 @@ public class CMSController
 		{
 			e.printStackTrace();
 		}
-		System.out.println("cms details :: "+cmsData.toString());
+		log.info("cms details :: "+cmsData.toString());
 		return cmsData.toString();
 	}
 	
@@ -194,7 +196,7 @@ public class CMSController
 			dataToCRM.put("password","");
 			
 			JSONObject crmReqData = new JSONObject(dataToCRM);
-			System.out.println("request data is" +crmReqData.toString());
+			log.info("request data is" +crmReqData.toString());
 			
 			InputStream output           = sendRequest(cms_url+"/services/data/v1.0/objects/Contact/"+session.getAttribute("cmsCompanyUniqueKey")+"?apikey="+adaptiveYouAPIKey, "PUT", crmReqData);
 			BufferedReader br            = new BufferedReader(new InputStreamReader(output));
@@ -206,7 +208,7 @@ public class CMSController
 					responseString += temp;
 				}
 				
-				System.out.println("After receiving response "+responseString);
+				log.info("After receiving response "+responseString);
 				if(!(responseString.equals("")))
 				{
 					  
@@ -216,9 +218,9 @@ public class CMSController
 					{
 						JSONObject jsonContact =jsonData.getJSONObject("contact");
 						
-							System.out.println("Contact ::"+jsonContact.getJSONArray("listPeople"));
+							log.info("Contact ::"+jsonContact.getJSONArray("listPeople"));
 							JSONArray jsonListPeopleArray = jsonContact.getJSONArray("listPeople");
-							System.out.println("listPeople ::"+jsonListPeopleArray.toString());
+							log.info("listPeople ::"+jsonListPeopleArray.toString());
 							for(int listPeople=0;listPeople < jsonListPeopleArray.length();listPeople++)
 							{
 								JSONObject jsonListPeople = jsonListPeopleArray.getJSONObject(listPeople);
@@ -244,7 +246,7 @@ public class CMSController
 	
 	
 	public InputStream sendRequest(String crmUrl, String method, JSONObject data) {
-		System.out.println("Inside send request function");
+		log.info("Inside send request function");
 		InputStream output = null;
 		try {
 			URL url = new URL(crmUrl);

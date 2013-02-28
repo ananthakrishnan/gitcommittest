@@ -6,15 +6,19 @@ import javax.servlet.http.HttpServletRequest;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import com.adaptive.business.dao.AdaptiveYouDAO;
+import com.adaptive.business.dao.BadgeListDAO;
+import com.adaptive.business.dao.UserBadgeLogDAO;
+import com.adaptive.business.dao.UserProfileDAO;
+import com.adaptive.business.dao.UserStatusDetailsDAO;
 
 public class AdminServiceMethod {
 	public static void adminDatastoreDetails(String company_Id,HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException
 	{
-		AdaptiveYouDAO adaptiveDAO = new AdaptiveYouoDataStore();
-		String badgesInfo = adaptiveDAO.getDataFromBadgeListTable(company_Id);
-		String usersInfo = adaptiveDAO.getDataFromUserProfile(company_Id);
-		String userStatusDetailsInfo = adaptiveDAO.getDataFromUserStatusDetails(company_Id);
-		String userBadgelogInfo = adaptiveDAO.getDataFromUserBadgeLogJdo(company_Id);
+		
+		String badgesInfo = BadgeListDAO.getDataFromBadgeListTable(company_Id);
+		String usersInfo = UserProfileDAO.getDataFromUserProfile(company_Id);
+		String userStatusDetailsInfo = UserStatusDetailsDAO.getDataFromUserStatusDetails(company_Id);
+		String userBadgelogInfo = UserBadgeLogDAO.getDataFromUserBadgeLogJdo(company_Id);
 		
 		request.setAttribute("badgesListMap",badgesInfo);
 		request.setAttribute("userProfileMap",usersInfo);

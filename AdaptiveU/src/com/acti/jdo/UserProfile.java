@@ -44,15 +44,6 @@ public class UserProfile implements Serializable{
     private String domain;
     @Persistent
     private ArrayList<String> profileUpdate;
-    @Persistent
-    private String profileAccess;
-    
-    public String getProfileAccess() {
-		return profileAccess;
-	}
-	public void setProfileAccess(String profileAccess) {
-		this.profileAccess = profileAccess;
-	}
     
     @Persistent
     private String cmsKey;

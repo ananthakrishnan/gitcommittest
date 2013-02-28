@@ -37,6 +37,7 @@ public class UserStatusDetails implements Serializable{
 	private String stuffid;
 	
 	private String userStatusKey;
+	
 
      private ArrayList<String> videostatus;
 	

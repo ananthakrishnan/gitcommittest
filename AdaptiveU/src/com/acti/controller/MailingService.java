@@ -46,7 +46,7 @@ import com.google.appengine.api.datastore.Text;
  *
  */
 public class MailingService {
-	private static final Logger log = Logger.getLogger((FeedbackReport.class).getName());
+	private static final Logger log = Logger.getLogger((MailingService.class).getName());
 	
 	public void sendMailToContactFeedbackSuggestion(String name,String comments, 	String commentsdate)
 	{

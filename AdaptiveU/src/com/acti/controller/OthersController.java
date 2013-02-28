@@ -31,15 +31,4 @@ public class OthersController {
 		OthersServiceMethod.dataStoreDetails(company_Id, userKey,request);
 		return "others";
 	}
-	
-	
-	@RequestMapping("/earnBadges")
-	public String earnBadges(HttpServletRequest request, HttpServletResponse response , HttpSession session ) throws JsonGenerationException, JsonMappingException, IOException
-	{
-		//HttpSession sessionEarnBadges = request.getSession();
-		String userKey = (String)session.getAttribute("userKeyLogin");
-		String company_Id=(String)session.getAttribute("companyKey");
-		OthersServiceMethod.earnBadgesDataStoreDetails(company_Id, userKey,request);
-		return "earnBadges";
-	}
 }

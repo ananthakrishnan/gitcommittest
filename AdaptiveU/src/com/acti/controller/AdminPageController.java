@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -32,9 +33,11 @@ import com.acti.jdo.PMF;
 import com.acti.jdo.UserBadgeLogJdo;
 import com.acti.jdo.UserProfile;
 import com.acti.jdo.UserStatusDetails;
+import com.adaptive.business.dao.UserStatusDetailsDAO;
 import com.adaptive.business.service.AdminServiceMethod;
 @Controller
 public class AdminPageController extends HttpServlet {
+	private static final Logger log = Logger.getLogger(AdminPageController.class.getName());
 	@RequestMapping(value="/admin" , method=RequestMethod.GET)
 	protected String adminPage(HttpServletRequest request,HttpServletResponse response) throws JsonGenerationException, JsonMappingException, IOException
 	{
@@ -81,7 +84,7 @@ public class AdminPageController extends HttpServlet {
 	}
 	
 	@RequestMapping(value="/updateUserStatusDetailsFromAdmin", method=RequestMethod.GET)
-	public void updateUserStatusDetailsFromAdmin(@RequestParam(value="userKey", required=false) String userid,@RequestParam(value="badgeId", required=false) String badgeid,@RequestParam(value="badgeVal", required=false) String badgevalue,@RequestParam(value="badgeType", required=false) String badgetype,@RequestParam(value="isSuggestedBadge", required=false) String isSuggestedBadge,HttpServletRequest request,HttpServletResponse response){
+	public void updateUserStatusDetailsFromAdmin(@RequestParam(value="userKey", required=false) String userid,@RequestParam(value="badgeId", required=false) String badgeid,@RequestParam(value="badgeVal", required=false) String badgevalue,@RequestParam(value="badgeType", required=false) String badgetype,HttpServletRequest request,HttpServletResponse response){
 		PersistenceManager updateBadgeLogJdoPMF = PMF.get().getPersistenceManager();
 		HttpSession session = request.getSession();
 		try
@@ -131,7 +134,7 @@ public class AdminPageController extends HttpServlet {
 						addNewUser.setCompanyId((String)(session.getAttribute("companyKey")));
 						if(session.getAttribute("userKeyLogin") != null)
 							addNewUser.setBadgeAssignee((String)session.getAttribute("userKeyLogin"));
-						pmUpdateStuffInfo.makePersistent(addNewUser);
+						UserStatusDetailsDAO.saveUserStatusDetails(addNewUser);
 						response.setContentType("html/text");
 						response.getWriter().println(uniqueKey);
 				}
@@ -178,18 +181,18 @@ public class AdminPageController extends HttpServlet {
 			{
 					int previousPoints	= (indexUserBadgeLogInfo.getPoints()-Integer.parseInt(badgevalue)); 
 					indexUserBadgeLogInfo.setPoints(previousPoints);
-					System.out.println("points :: "+previousPoints);
+					log.info("points :: "+previousPoints);
 					if("badge".equalsIgnoreCase(badgetype))
 					{
 						ArrayList<String> previousbadges = indexUserBadgeLogInfo.getBadgeId();
-						System.out.println("array list :: "+previousbadges);
+						log.info("array list :: "+previousbadges);
 						previousbadges.remove(badgeid);
 						indexUserBadgeLogInfo.setBadgeId(previousbadges);
 					}
 					else if("trophy".equalsIgnoreCase(badgetype))
 					{
 						ArrayList<String> previousTrophies = indexUserBadgeLogInfo.getTrophyId();
-						System.out.println("array list :: "+previousTrophies);
+						log.info("array list :: "+previousTrophies);
 						previousTrophies.remove(badgeid);
 						indexUserBadgeLogInfo.setTrophyId(previousTrophies);
 					}

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -35,6 +36,9 @@ import com.acti.jdo.AuctionTransactions;
 import com.acti.jdo.PMF;
 import com.acti.jdo.UserBadgeLogJdo;
 import com.acti.jdo.UserProfile;
+import com.adaptive.business.dao.AuctionListDAO;
+import com.adaptive.business.dao.AuctionParticipantsDAO;
+import com.adaptive.business.dao.AuctionTransactionsDAO;
 import com.adaptive.business.service.AddNewStuffServiceMethod;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
@@ -53,6 +57,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class AddNewStuffPageController  extends HttpServlet
 {
+	private static final Logger log = Logger.getLogger(AddNewStuffPageController.class.getName());
 	 private static ChannelService channelService = ChannelServiceFactory.getChannelService();
 	@RequestMapping("/addstuff")
 	public String  addstuff(HttpServletRequest request, HttpServletResponse response , HttpSession session ) throws JsonGenerationException, JsonMappingException, IOException
@@ -127,8 +132,7 @@ public class AddNewStuffPageController  extends HttpServlet
 		{
 			if(existauctionKey.equals(""))
 			{
-				try
-				{
+				
 					AuctionList aList = new AuctionList();
 					UUID auctionKey = UUID.randomUUID(); 
 					aList.setKey(auctionKey.toString());
@@ -139,16 +143,10 @@ public class AddNewStuffPageController  extends HttpServlet
 					aList.setAuctionMins(auctionMintues);
 					aList.setAuctionMaxPoints(auctionStartPoints);
 					aList.setAuctionDescription(auctionDescription);
-					
-					
-					pm.makePersistent(aList);
+					AuctionListDAO.saveAuctionList(aList);
 					response.setContentType("text/html");
 					response.getWriter().println(auctionKey.toString());
-				}
-				catch(Exception e)
-				{
-					e.printStackTrace();
-				}
+				
 			}
 			else
 			{
@@ -159,13 +157,12 @@ public class AddNewStuffPageController  extends HttpServlet
 				auctionList.setAuctionMins(auctionMintues);
 				auctionList.setAuctionMaxPoints(auctionStartPoints);
 				auctionList.setAuctionDescription(auctionDescription);
-				
-				pm.makePersistent(auctionList);
+				AuctionListDAO.saveAuctionList(auctionList);
 			}
 		}
 		catch (Exception e) 
 		{
-			System.out.println("Exception in Save Auction Details");
+			log.warning("Exception in Save Auction Details");
 		}
 		finally
 		{
@@ -247,13 +244,13 @@ public class AddNewStuffPageController  extends HttpServlet
 			Integer highestBid = 0;
 			String userId = "";
 			String auctionId = request.getParameter("auctionId");
-			System.out.println("request.getAttribute(auctionId) ::"+request.getParameter("auctionId"));
+			log.info("request.getAttribute(auctionId) ::"+request.getParameter("auctionId"));
 			Query auctionTransactions = pm.newQuery(AuctionTransactions.class,"	auctionId == '"+request.getParameter("auctionId")+"'");
 			List<AuctionTransactions> auctionTrans = (List<AuctionTransactions>)auctionTransactions.execute();
-			System.out.println("size ::"+auctionTrans.size());
+			log.info("size ::"+auctionTrans.size());
 			for(AuctionTransactions auctionInfo:auctionTrans)
 			{
-				System.out.println("auctionInfo.getBidPoints() ::"+auctionInfo.getBidPoints());
+				log.info("auctionInfo.getBidPoints() ::"+auctionInfo.getBidPoints());
 				if(highestBid < auctionInfo.getBidPoints())
 				{
 					highestBid  = auctionInfo.getBidPoints();
@@ -262,7 +259,7 @@ public class AddNewStuffPageController  extends HttpServlet
 				
 			}
 			
-			System.out.println("Points to be detected for "+userId+ " highest is ::"+highestBid);
+			log.info("Points to be detected for "+userId+ " highest is ::"+highestBid);
 			UserBadgeLogJdo winnerUserInfo = new UserBadgeLogJdo();
 			if(! ("".equalsIgnoreCase(userId)))
 			{
@@ -335,7 +332,7 @@ public class AddNewStuffPageController  extends HttpServlet
 			List<AuctionTransactions> auctionTrans = (List<AuctionTransactions>)auctionTransactions.execute();
 			for(AuctionTransactions auctionInfo:auctionTrans)
 			{
-				System.out.println("bidPoints ::"+bidPoints + " auctionInfo.getBidPoints() ::"+auctionInfo.getBidPoints());
+				log.info("bidPoints ::"+bidPoints + " auctionInfo.getBidPoints() ::"+auctionInfo.getBidPoints());
 				if(Integer.parseInt(bidPoints) <= auctionInfo.getBidPoints())
 				{
 					highestBid = false;
@@ -344,7 +341,7 @@ public class AddNewStuffPageController  extends HttpServlet
 					break;
 				}
 			}
-			System.out.println("highestBid ::"+highestBid);
+			log.info("highestBid ::"+highestBid);
 			if(highestBid)
 			{
 				
@@ -356,12 +353,12 @@ public class AddNewStuffPageController  extends HttpServlet
 					for(AuctionTransactions auctionInfo:previousTransactionByUser)
 					{
 						Integer previousBid = auctionInfo.getBidPoints();
-						System.out.println("After setting the bidpoints ::"+auctionInfo.getPreviousBids());
+						log.info("After setting the bidpoints ::"+auctionInfo.getPreviousBids());
 						Map<Integer, Long> listPreviousBid = new HashMap<Integer, Long>();
 						listPreviousBid.putAll(auctionInfo.getPreviousBids());
 						listPreviousBid.put(previousBid,auctionInfo.getRequestedTime());
 						auctionInfo.setPreviousBids(listPreviousBid);
-						System.out.println("After setting the bidpoints ::"+auctionInfo);
+						log.info("After setting the bidpoints ::"+auctionInfo);
 						auctionInfo.setBidPoints(Integer.parseInt(bidPoints));
 						
 						Date currentDate = new Date();
@@ -397,7 +394,7 @@ public class AddNewStuffPageController  extends HttpServlet
 					aTrans.setRequestedTime(longStartTime);
 					listPreviousBid.put(Integer.parseInt(bidPoints),longStartTime);
 					aTrans.setPreviousBids(listPreviousBid);
-					pm.makePersistent(aTrans);
+					AuctionTransactionsDAO.saveAuctionTransactions(aTrans);
 				}
 				sendMessageToAllUsers( aTrans,request,response,session);
 				response.setContentType("text/html");
@@ -429,7 +426,7 @@ public class AddNewStuffPageController  extends HttpServlet
 			{
 				sendMessageToChannel(auctionInfo.getUserId(),objMapper.writeValueAsString(newAuctionEntryMap));
 			}
-			//System.out.println("existingUsersForAuctionId ::"+existingUsersForAuctionId.toString());
+			//log.info("existingUsersForAuctionId ::"+existingUsersForAuctionId.toString());
 				
 		}
 		catch(Exception e)
@@ -475,7 +472,7 @@ public class AddNewStuffPageController  extends HttpServlet
 				  auctionentry.setKey(key.toString());
 				  auctionentry.setAuctionId(auctionId);
 				  auctionentry.setUserId(userId);
-				  pm.makePersistent(auctionentry);
+				  AuctionParticipantsDAO.saveAuctionParticipants(auctionentry);
 			      String token = createChannel(userId);
 			      response.setContentType("text/xml");
 				  response.getWriter().println(token);
@@ -505,7 +502,7 @@ public class AddNewStuffPageController  extends HttpServlet
 			List<AuctionTransactions> auctionTrans = (List<AuctionTransactions>)auctionTransactions.execute();
 			for(AuctionTransactions auctionInfo:auctionTrans)
 			{
-				System.out.println(auctionInfo.getPreviousBids());
+				log.info(auctionInfo.getPreviousBids()+"");
 				auctionMapByAuctionId.put( auctionInfo.getKey(),auctionInfo);
 			}
 			

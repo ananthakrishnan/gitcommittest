@@ -5,6 +5,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
+
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.servlet.http.HttpServlet;
@@ -20,7 +22,7 @@ import com.acti.jdo.UserStatusDetails;
 
 @Controller
 public class ManageStuff  extends HttpServlet{
-	
+	private static final Logger log = Logger.getLogger(ManageStuff.class.getName());
 	
 	public void pendingReqInfo(HttpServletRequest req)
 	{

@@ -5,17 +5,22 @@ import javax.servlet.http.HttpServletRequest;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import com.adaptive.business.dao.AdaptiveYouDAO;
+import com.adaptive.business.dao.BadgeListDAO;
+import com.adaptive.business.dao.UserBadgeLogDAO;
+import com.adaptive.business.dao.UserProfileDAO;
+import com.adaptive.business.dao.UserStatusDetailsDAO;
+import com.adaptive.business.dao.videodetailsDAO;
 
 public class ApproveBadgePage {
 
 	public void getDetailsForApproveStuffPage(String compId,HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException
 	{
-		AdaptiveYouDAO adaptiveDAO 		= new AdaptiveYouoDataStore();
-		String videoDetailsMap 			= adaptiveDAO.getDataFromVideoDetails(compId);
-		String userProfileMap 			= adaptiveDAO.getDataFromUserProfile(compId);
-		String badgesInfo	 			= adaptiveDAO.getDataFromBadgeListTable(compId);
-		String userStatusDetailsMap 	= adaptiveDAO.getDataFromUserStatusDetails(compId);
-		String userBadgeLogJdoMap			= adaptiveDAO.getDataFromUserBadgeLogJdo(compId);
+		
+		String videoDetailsMap 			= videodetailsDAO.getDataFromVideoDetails(compId);
+		String userProfileMap 			= UserProfileDAO.getDataFromUserProfile(compId);
+		String badgesInfo	 			= BadgeListDAO.getDataFromBadgeListTable(compId);
+		String userStatusDetailsMap 	= UserStatusDetailsDAO.getDataFromUserStatusDetails(compId);
+		String userBadgeLogJdoMap			= UserBadgeLogDAO.getDataFromUserBadgeLogJdo(compId);
 		
 		request.setAttribute("userDetailsMap",userProfileMap);
 		request.setAttribute("badgesListMap",badgesInfo);

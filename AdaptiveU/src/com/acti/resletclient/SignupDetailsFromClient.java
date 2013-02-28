@@ -31,7 +31,7 @@ public class SignupDetailsFromClient extends ServerResource
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Post
-	public ArrayList addDetails(ArrayList Details)   throws Exception
+	public String addDetails(ArrayList Details)   throws Exception
 		{
 		
 		String firstname = (String) Details.get(0);
@@ -122,7 +122,7 @@ public class SignupDetailsFromClient extends ServerResource
 //			}
 //		}
 		responseToClient.add(respToClient);
-		return responseToClient;
+		return compkey.toString();
 		}
 	
 }

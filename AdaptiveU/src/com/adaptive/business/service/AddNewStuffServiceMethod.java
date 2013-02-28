@@ -17,14 +17,16 @@ import org.codehaus.jackson.map.ObjectMapper;
 import com.acti.jdo.BadgesList;
 import com.acti.jdo.PMF;
 import com.adaptive.business.dao.AdaptiveYouDAO;
+import com.adaptive.business.dao.AuctionListDAO;
+import com.adaptive.business.dao.BadgeListDAO;
 
 public class AddNewStuffServiceMethod 
 {
 	public static void addStuffDetails(String company_Id,HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException
 	{
-		AdaptiveYouDAO adaptiveDAO 					= new AdaptiveYouoDataStore();
-		String badgesInfo 							= adaptiveDAO.getDataFromBadgeListTable(company_Id);
-		String auctionListInfo  					= adaptiveDAO.getDataFromAuctionListTable(company_Id);
+		
+		String badgesInfo 							= BadgeListDAO.getDataFromBadgeListTable(company_Id);
+		String auctionListInfo  					= AuctionListDAO.getDataFromAuctionListTable(company_Id);
 		
 		request.setAttribute("badgesListMap",badgesInfo);
 		request.setAttribute("auctionListInfo",auctionListInfo);

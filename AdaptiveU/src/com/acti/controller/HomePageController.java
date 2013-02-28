@@ -31,6 +31,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.acti.jdo.PMF;
 import com.acti.jdo.UserProfile;
+import com.acti.jdo.UserStatusDetails;
+import com.acti.resletclient.SignupDetailsFromClient;
+import com.adaptive.business.dao.AdaptiveYouDAO;
+import com.adaptive.business.service.AdaptiveYouServiceMethods;
+import com.adaptive.business.service.AdaptiveYouoDataStore;
 import com.google.api.client.auth.oauth2.draft10.AccessTokenResponse;
 import com.google.api.client.auth.oauth2.draft10.AuthorizationRequestUrl;
 import com.google.api.client.extensions.appengine.http.urlfetch.UrlFetchTransport;
@@ -432,14 +437,27 @@ public class HomePageController extends HttpServlet {
 		    return "user";
 	}
 	
+	
+	String type			= "";
+	
 	@RequestMapping(value="/oauth2callback" , method=RequestMethod.GET)
-	public String openId(HttpServletRequest req,HttpServletResponse resp) throws ServletException, IOException 
+	public String openId(HttpServletRequest req,HttpServletResponse resp) throws Exception 
 	{
 		 HttpSession session = req.getSession();
 		String oAuthMode = lResourceBundle.getString("MODE");
 		String oauth_client_id 		= "";
 		String oauth_client_secret 	= "";
 		String oauth_redirect_uri 	= "";
+		
+		
+		if(req.getParameter("type") != null)
+		{
+			type			= req.getParameter("type");
+		}
+		
+		
+		System.out.println("type :: "+type);
+		
 		
 		if("LIVE".equalsIgnoreCase(oAuthMode))
 		{
@@ -518,7 +536,7 @@ public class HomePageController extends HttpServlet {
 			    	  firstName = googleUserDetails.getString("given_name");
 					if(googleUserDetails.getString("family_name") != null)
 			    	  lastName = googleUserDetails.getString("family_name");
-					if(!("null".equalsIgnoreCase(googleUserDetails.getString("picture"))) && googleUserDetails.getString("picture") != null)
+					if(googleUserDetails.getString("picture") != null)
 			    	  profileImage= googleUserDetails.getString("picture");
 			      } 
 			      catch (JSONException e) {
@@ -546,6 +564,32 @@ public class HomePageController extends HttpServlet {
 //			      }
 //			      else
 //			      {
+			      
+			      if(type.equals("signupClient"))
+			      {
+			    	  SignupDetailsFromClient			signupInstance				= new SignupDetailsFromClient();
+			    	  
+			    	  ArrayList signupDetails				= new ArrayList();
+			    	  
+			    	  signupDetails.add(firstName);
+			    	  signupDetails.add(firstName);
+			    	  signupDetails.add(emailId.toLowerCase());
+			    	  signupDetails.add("");
+			    	  signupDetails.add(profileImage);
+			    	  
+			    	  if(session.getAttribute("companyKey") == null)
+			    	  {
+			    		  String companyKey			= signupInstance.addDetails(signupDetails);
+				    	  
+				    	  session.setAttribute("companyKey",companyKey);
+			    	  }
+			    	  
+			    	  type			= "";
+			    	  
+			    	  resp.sendRedirect("/persistUser");
+			      }
+			      else
+			      {
 			    	  if(session.getAttribute("workingRemotelyIsActive") == null && session.getAttribute("emailIdDuringRemoteSession") == null)
 				      {
 				    	  resp.sendRedirect(req.getScheme() + "://"+ req.getServerName() + ":" + req.getServerPort() + req.getContextPath()+"/userCompanyList");
@@ -555,6 +599,8 @@ public class HomePageController extends HttpServlet {
 				    	  session.setAttribute("emailIdDuringRemoteSession", emailId.toLowerCase()); 
 				    	  resp.sendRedirect(req.getScheme() + "://"+ req.getServerName() + ":" + req.getServerPort() + req.getContextPath()+"/"+session.getAttribute("companyNameRemote")+".do/"+session.getAttribute("badgeNameRemote"));
 				      }
+			      }
+			    	 
 //			      }
 	      }
 	     
@@ -645,6 +691,34 @@ public class HomePageController extends HttpServlet {
 //		      }
 //		      else
 //		      {
+		      if(type.equals("signupClient"))
+		      {
+		    	  SignupDetailsFromClient			signupInstance				= new SignupDetailsFromClient();
+		    	  
+		    	  ArrayList signupDetails				= new ArrayList();
+		    	  
+		    	  signupDetails.add(firstName);
+		    	  signupDetails.add(firstName);
+		    	  signupDetails.add(emailId.toLowerCase());
+		    	  signupDetails.add("");
+		    	  signupDetails.add(profileImage);
+		    	  
+		    	  
+		    	  if(session.getAttribute("companyKey") == null)
+		    	  {
+		    		  String companyKey			= signupInstance.addDetails(signupDetails);
+			    	  
+			    	  session.setAttribute("companyKey",companyKey);
+		    	  }
+		    	  
+		    	  
+		    	  
+		    	  type			= "";
+		    	  
+		    	  resp.sendRedirect("/persistUser");
+		      }
+		      else
+		      {
 		    	  if(session.getAttribute("workingRemotelyIsActive") == null && session.getAttribute("emailIdDuringRemoteSession") == null)
 			      {
 			    	  resp.sendRedirect(req.getScheme() + "://"+ req.getServerName() + ":" + req.getServerPort() + req.getContextPath()+"/userCompanyList");
@@ -654,6 +728,8 @@ public class HomePageController extends HttpServlet {
 			    	  session.setAttribute("emailIdDuringRemoteSession", emailId.toLowerCase()); 
 			    	  resp.sendRedirect(req.getScheme() + "://"+ req.getServerName() + ":" + req.getServerPort() + req.getContextPath()+"/"+session.getAttribute("companyNameRemote")+".do/"+session.getAttribute("badgeNameRemote"));
 			      }
+		      }
+		    	  
 //		      }
 		      
 //		      if(session.getAttribute("workingRemotelyIsActive") == null && session.getAttribute("emailIdDuringRemoteSession") == null)
@@ -675,21 +751,193 @@ public class HomePageController extends HttpServlet {
 
 	
 	@RequestMapping(value="/loginDetailsFromClient", method=RequestMethod.GET)
-	public void persistUserFromClient(@RequestParam(value="firstName", required=false) String firstName,@RequestParam(value="lastName", required=false) String lastName,@RequestParam(value="email", required=false) String emailId,@RequestParam(value="profileImage", required=false) String profileImage,HttpServletRequest req, HttpServletResponse response , HttpSession session)
+	public String persistUserFromClient(@RequestParam(value="firstName", required=false) String firstName,@RequestParam(value="lastName", required=false) String lastName,@RequestParam(value="email", required=false) String emailId,@RequestParam(value="profileImage", required=false) String profileImage, @RequestParam(value="signinFlag", required=false) String signinFlag, HttpServletRequest req, HttpServletResponse response , HttpSession session) throws JSONException
 	{
 		  session.setAttribute("emailIdFirst",emailId.toLowerCase());
 	      session.setAttribute("firstNameFirst",firstName);
 	      session.setAttribute("lastNameFirst",lastName);
 	      session.setAttribute("profileImageFirst", profileImage);
+	     // session.setAttribute("signinFlagFirst", signinFlag);
+	      Date now = new Date();
 	      try 
 	      {
+    		  System.out.println(signinFlag);
+
+	    	  if(signinFlag==null)
+	    	  {
+	    		  System.out.println(firstName);
 			response.sendRedirect("/userCompanyList");
+	    	  }
+	    	  else
+	    	  {
+	    		  
+	    		  
+	    		  
+	    		  PersistenceManager pmComp = PMF.get().getPersistenceManager();
+	    		  System.out.println(firstName);
+	    		  pmComp = PMF.get().getPersistenceManager();
+					UserProfile userInfo = new UserProfile();
+					UUID compkey = UUID.randomUUID();
+					userInfo.setKey(compkey.toString());
+					//userInfo.setcompanyName(company);
+					userInfo.setcompanyId(compkey.toString());
+					userInfo.setFirstName(firstName);
+					userInfo.setLastName(lastName);
+					userInfo.setLoginTime(now);
+					userInfo.setDomain(emailId.split("@")[1]);
+					userInfo.setprofilePicture(profileImage);
+					userInfo.setType("Company");
+					userInfo.setuserName(emailId.toLowerCase());
+					
+					CMSController cmsInstance				= new CMSController();
+					String dataReturnedFromCMS				= cmsInstance.insertCompanyToCMS(userInfo);
+					System.out.println(dataReturnedFromCMS+" from cms controller");
+					if(dataReturnedFromCMS != null)
+					{
+						userInfo.setCmsKey(dataReturnedFromCMS);
+					}
+					
+					
+					pmComp.makePersistent(userInfo);
+	    		  
+	    		  
+	    		  
+	    		  
+	    		  
+	    		  
+	    		  
+	    		  
+				  session.setAttribute("companykey",compkey.toString());
+	    		  session.setAttribute("emailIdFirst",emailId.toLowerCase());
+	    	      session.setAttribute("firstNameFirst",firstName);
+	    	      session.setAttribute("lastNameFirst",lastName);
+	    	      session.setAttribute("signinFlagFirst", signinFlag);
+	    		  System.out.println(signinFlag);
+	    		  //String redirectsignin="http://localhost:8888/loginDetailsFromClient.do?firstName="+firstName+"&lastName="+lastName+"&email="+emailId+"&profileImage="+profileImage+"&signinFlag="+"signin";
+	    		  
+	    		  return "user";
+	    		  //response.sendRedirect("/persistUser");
+	    	  }
 	      } 
 	      catch (IOException e) 
 	      {
 			e.printStackTrace();
 	      }
+	      return "user";
 	}
+	
+	@RequestMapping(value="/passingCompanyName" , method=RequestMethod.GET)
+	public  String  passCompanyName(@RequestParam(value="company", required=false) String company,@RequestParam(value="companyKey", required=false) String companyKey,@RequestParam(value="email", required=false) String emailId,HttpServletRequest req, @RequestParam(value="firstName", required=false) String firstName,@RequestParam(value="lastName", required=false) String lastName,@RequestParam(value="profileImage", required=false) String profileImage,HttpServletResponse response , HttpSession session ) throws JsonGenerationException, JsonMappingException, IOException
+	{
+		try
+		{
+			//@RequestParam(value="firstName", required=false) String firstName,@RequestParam(value="lastName", required=false) String lastName,@RequestParam(value="email", required=false) String emailId,@RequestParam(value="profileImage", required=false) String profileImage, @RequestParam(value="signinFlag", required=false) String signinFlag,
+			
+			
+			PersistenceManager pm = PMF.get().getPersistenceManager();
+			PMF.get().getPersistenceManager();
+			PMF.get().getPersistenceManager();
+			HttpSession sessionLogin = req.getSession();
+			String userKey = "";
+			String compId = companyKey;
+			String userType="";
+			LinkedHashMap<String,UserProfile> respUserDetails = new LinkedHashMap<String,UserProfile>();
+			Query query =pm.newQuery(UserProfile.class,"userName == '"+emailId+"' && companyId == '"+companyKey+"' && type != 'requested'");//&& type == 'user'
+			System.out.println(companyKey);
+			Date now = new Date();
+			List<UserProfile> contactDetails = (List<UserProfile>)query.execute();
+			
+			System.out.println("company ID   "+companyKey+"   "+contactDetails);
+			//log.warning("comes to else");
+			String companyName="";
+			for(UserProfile userDls: contactDetails)
+			{
+				
+				userDls.setcompanyName(company);
+
+				
+				if(userDls.getKey() != null)
+				{
+					if(!("Company".equalsIgnoreCase(userDls.getType())))
+					{
+						userKey = userDls.getKey();
+						sessionLogin.setAttribute("userKeyLogin", userDls.getKey());//userDls.getKey();
+						
+						if(!(userDls.getProfileUpdate().isEmpty()))
+						{
+							if(!(userDls.getProfileUpdate().contains("firstName")) && !(userDls.getProfileUpdate().contains("lastName")))
+							{
+								userDls.setFirstName(firstName);
+								userDls.setLastName(lastName);
+							}
+							if(!(userDls.getProfileUpdate().contains("profileImage")))
+							{
+								userDls.setprofilePicture(profileImage);
+							}
+						}
+						else
+						{
+							userDls.setFirstName(firstName);
+							userDls.setLastName(lastName);
+							userDls.setprofilePicture(profileImage);
+						}
+						userDls.setDomain(emailId.split("@")[1]);
+						userDls.setLoginTime(now);
+						
+						
+						
+						userDls.setcompanyId(compId);
+						pm.currentTransaction().begin();
+						pm.makePersistent(userDls);
+						pm.currentTransaction().commit();
+					}
+					else if("Company".equalsIgnoreCase(userDls.getType()))
+							{
+								userKey = userDls.getKey();
+								sessionLogin.setAttribute("userKeyLogin", userDls.getKey());//userDls.getKey();
+								userDls.setLoginTime(now);
+								pm.currentTransaction().begin();
+								pm.makePersistent(userDls);
+								pm.currentTransaction().commit();
+							}
+				}
+				respUserDetails.put(userDls.getKey(), userDls);
+				companyName=userDls.getcompanyName();
+				
+				userType				= userDls.getType();
+			}
+			
+			
+			 Gson gson				 = new Gson();
+			  gson.toJson(respUserDetails);
+		      ObjectMapper objMapper = new ObjectMapper();
+				objMapper.configure( JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES , true );
+				objMapper.configure( DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES , false );
+				
+				 req.setAttribute("userProfileDetails",objMapper.writeValueAsString(respUserDetails));
+		      sessionLogin.setAttribute("companyKey",compId);
+		      objMapper.configure( JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES , true );
+				objMapper.configure( DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES , false );
+				
+			  sessionLogin.setAttribute("userProfileDetails",objMapper.writeValueAsString(respUserDetails));
+		      sessionLogin.setAttribute("userEmailid",emailId);
+		      sessionLogin.setAttribute("companyName",companyName);
+		      sessionLogin.setAttribute("userFirstName",firstName);
+		      sessionLogin.setAttribute("userLastName", lastName);
+		      sessionLogin.setAttribute("userImage",profileImage);
+		      sessionLogin.setAttribute("signinFlagFirst",null);
+		     // response.sendRedirect("/persistUser");
+		      //sessionLogin.setAttribute("companyName",company);
+
+		}
+		catch(IOException e)
+		{
+			
+		}
+		return "user";
+	}
+
+	//end
 	
 	@RequestMapping(value="/userCompanyList", method=RequestMethod.GET)
 	public String userCompanyList(HttpServletRequest req, HttpServletResponse response , HttpSession session) throws JsonGenerationException, JsonMappingException, IOException
@@ -721,10 +969,10 @@ public class HomePageController extends HttpServlet {
 		
 		if(companyDetails.isEmpty() || companyDetails.size() == 0)
 		{
-			System.out.println("*****************************Before session************ COMPANY	DETAILS 0"+session.getAttribute("openLogin"));
+			log.info("*****************************Before session************ COMPANY	DETAILS 0"+session.getAttribute("openLogin"));
 			if(session.getAttribute("openLogin") != null)
 			{
-				System.out.println("*****************************After session************" + session.getAttribute("openLogin"));
+				log.info("*****************************After session************" + session.getAttribute("openLogin"));
 				response.sendRedirect("/openLoginController");
 			}
 			else
@@ -734,10 +982,10 @@ public class HomePageController extends HttpServlet {
 		} 
 		else if(companyDetails.size() == 1)
 		{
-			System.out.println("*****************************Before session************ COMPANY	DETAILS 1" + session.getAttribute("openLogin"));
+			log.info("*****************************Before session************ COMPANY	DETAILS 1" + session.getAttribute("openLogin"));
 			if(session.getAttribute("openLogin") != null)
 			{
-				System.out.println("*****************************AFTER session************ COMPANY	DETAILS 1");
+				log.info("*****************************AFTER session************ COMPANY	DETAILS 1");
 				companyList.put("fdc0c85f-ca2d-4d25-9bc9-e5b05f1cb2e9","EMICS");
 				
 				for(UserProfile compInfo:companyDetails)
@@ -770,10 +1018,10 @@ public class HomePageController extends HttpServlet {
 		}
 		else if(companyDetails.size() > 1)
 		{
-			System.out.println("*****************************Before session************ COMPANY	DETAILS MORE THAN 1" + session.getAttribute("openLogin"));
+			log.info("*****************************Before session************ COMPANY	DETAILS MORE THAN 1" + session.getAttribute("openLogin"));
 			if(session.getAttribute("openLogin") != null)
 			{
-				System.out.println("*****************************AFTER session************ COMPANY	DETAILS MORE THAN 1");
+				log.info("*****************************AFTER session************ COMPANY	DETAILS MORE THAN 1");
 				companyList.put("fdc0c85f-ca2d-4d25-9bc9-e5b05f1cb2e9","EMICS");
 				
 				for(UserProfile compInfo:companyDetails)
@@ -806,7 +1054,7 @@ public class HomePageController extends HttpServlet {
 	}
 	
 	@RequestMapping(value="/intermediateCheck", method=RequestMethod.GET)
-	public String intermediateCheck(HttpServletRequest req, HttpServletResponse response , HttpSession session) throws JsonGenerationException, JsonMappingException, IOException, JSONException
+	public void intermediateCheck(HttpServletRequest req, HttpServletResponse response , HttpSession session) throws JsonGenerationException, JsonMappingException, IOException, JSONException
 	{
 		String referrerUrl										= req.getHeader("Referer");
 		String companyID			 							= req.getParameter("companyKey").trim();
@@ -820,188 +1068,142 @@ public class HomePageController extends HttpServlet {
 		session.setAttribute("companyKey", companyID);
 		session.setAttribute("referrerUrl", referrerUrl);
 		
-		//response.sendRedirect("/persistUser");
-		UserProfilePageController userProfile = new  UserProfilePageController();
-		String mePage = userProfile.verifyOpenIdResponseJson(req,response,session);
+		response.sendRedirect("/persistUser");
+	
+//		if(referrerUrl.contains("/userCompanyList"))
+//		{
+//			response.sendRedirect("/persistUser");
+//		}
+//		else
+//		{
+//			AdaptiveYouServiceMethods userProfileDetails		= new AdaptiveYouServiceMethods();
+//			String userProfileDetailsList						= userProfileDetails.getDataFromUserProfile(companyID, userEmailId);
+//			
+//			JSONObject userProfileObject						= new JSONObject(userProfileDetailsList);
+//			
+//			if(userProfileObject != null && userProfileObject.length() > 0)
+//			{
+//				session.setAttribute("userProfileDetails",userProfileDetailsList);
+//				session.setAttribute("companyName",userProfileObject.getString("companyName"));
+//				session.setAttribute("userFirstName",userProfileObject.getString("firstName"));
+//				session.setAttribute("userLastName",userProfileObject.getString("lastName"));
+//				session.setAttribute("userImage",userProfileObject.getString("profileImage"));
+//			}
+//			
+//			response.sendRedirect(referrerUrl);
+//		}
 		
-		return mePage;
 	}
 
 	
 	String croppedImageUrl 					= "";
 	String uploadSessionURL 				= "";
 	
-//	@RequestMapping(value="/displayCroppedImage")
-//	public void displayCroppedImage(@RequestParam(value="x1", required=false) String x1,@RequestParam(value="y1", required=false) String y1,@RequestParam(value="x2", required=false) String x2,@RequestParam(value="y2", required=false) String y2,@RequestParam(value="height", required=false) String height,@RequestParam(value="width", required=false) String width,HttpServletResponse response , HttpSession session,HttpServletRequest  request) throws IOException
-//	{
-//		BlobstoreService blobstoreService 	= BlobstoreServiceFactory.getBlobstoreService();
-//		ImagesService image  			  	= (ImagesService) ImagesServiceFactory.getImagesService();
-//		BlobKey oldblobKey 				  	= null;
-//		croppedImageUrl						= "";
-//		int realwidth,realheight;
-//		float X1,X2,Y1,Y2;
-//		
-//		X1									= Float.parseFloat(x1);
-//		Y1									= Float.parseFloat(y1);
-//		X2									= Float.parseFloat(x2);
-//		Y2									= Float.parseFloat(y2);
-//		realwidth							= Integer.parseInt(width);
-//		realheight							= Integer.parseInt(height);
-//		
-//		X1									= X1/realwidth;
-//		X2									= X2/realwidth;
-//		Y1									= Y1/realheight;
-//		Y2									= Y2/realheight;
-//		
-//		
-//		
-//        
-//		Map<String, List<BlobKey>> blobs 	= blobstoreService.getUploads(request);
-//		List<BlobKey> blobKeyList			= blobs.get("chooseNewPicture");
-//		
-//		for(BlobKey iteratingBlobKeyList : blobKeyList)
-//		{
-//			if(iteratingBlobKeyList != null)
-//			{
-//				oldblobKey					= iteratingBlobKeyList;
-//			}
-//		}
-//        
-//        Image oldimage 						= ImagesServiceFactory.makeImageFromBlob(oldblobKey);
-//        Transform cropTransform 			= ImagesServiceFactory.makeCrop(X1, Y1, X2, Y2);
-//        Image newimage 						= image.applyTransform(cropTransform, oldimage);
-//
-//        FileService fileService 			= FileServiceFactory.getFileService();
-//        AppEngineFile file 					= fileService.createNewBlobFile(newimage.getFormat().toString());
-//        FileWriteChannel writeChannel 		= fileService.openWriteChannel(file, true);
-//        	
-//        writeChannel.write(ByteBuffer.wrap(newimage.getImageData()));
-//        writeChannel.closeFinally();
-//
-//        BlobKey croppedblobKey 				= fileService.getBlobKey(file);
-//
-//        croppedImageUrl		 				= image.getServingUrl(ServingUrlOptions.Builder.withBlobKey(croppedblobKey));
-//        uploadSessionURL					= blobstoreService.createUploadUrl("/displayCroppedImage");
-//        
-//        blobstoreService.delete(oldblobKey);
-//	}
-	
-	
 	@RequestMapping(value="/displayCroppedImage")
-	public void displayCroppedImage(HttpServletResponse response , HttpSession session,HttpServletRequest  request) throws IOException
+	public void displayCroppedImage(@RequestParam(value="x1", required=false) String x1,@RequestParam(value="y1", required=false) String y1,@RequestParam(value="x2", required=false) String x2,@RequestParam(value="y2", required=false) String y2,@RequestParam(value="height", required=false) String height,@RequestParam(value="width", required=false) String width,HttpServletResponse response , HttpSession session,HttpServletRequest  request) throws IOException
 	{
 		BlobstoreService blobstoreService 	= BlobstoreServiceFactory.getBlobstoreService();
 		ImagesService image  			  	= (ImagesService) ImagesServiceFactory.getImagesService();
+		BlobKey oldblobKey 				  	= null;
+		croppedImageUrl						= "";
+		int realwidth,realheight;
+		float X1,X2,Y1,Y2;
 		
+		X1									= Float.parseFloat(x1);
+		Y1									= Float.parseFloat(y1);
+		X2									= Float.parseFloat(x2);
+		Y2									= Float.parseFloat(y2);
+		realwidth							= Integer.parseInt(width);
+		realheight							= Integer.parseInt(height);
+		
+		X1									= X1/realwidth;
+		X2									= X2/realwidth;
+		Y1									= Y1/realheight;
+		Y2									= Y2/realheight;
+		
+		
+		
+        
 		Map<String, List<BlobKey>> blobs 	= blobstoreService.getUploads(request);
 		List<BlobKey> blobKeyList			= blobs.get("chooseNewPicture");
-		
-		BlobKey	blobkey						= null;
 		
 		for(BlobKey iteratingBlobKeyList : blobKeyList)
 		{
 			if(iteratingBlobKeyList != null)
 			{
-				blobkey						= iteratingBlobKeyList;
+				oldblobKey					= iteratingBlobKeyList;
 			}
 		}
-		
-		session.setAttribute("profileImageUploaded", image.getServingUrl(ServingUrlOptions.Builder.withBlobKey(blobkey)));
-		session.setAttribute("uploadSessionUrl", blobstoreService.createUploadUrl("/displayCroppedImage"));
+        
+        Image oldimage 						= ImagesServiceFactory.makeImageFromBlob(oldblobKey);
+        Transform cropTransform 			= ImagesServiceFactory.makeCrop(X1, Y1, X2, Y2);
+        Image newimage 						= image.applyTransform(cropTransform, oldimage);
+
+        FileService fileService 			= FileServiceFactory.getFileService();
+        AppEngineFile file 					= fileService.createNewBlobFile(newimage.getFormat().toString());
+        FileWriteChannel writeChannel 		= fileService.openWriteChannel(file, true);
+        	
+        writeChannel.write(ByteBuffer.wrap(newimage.getImageData()));
+        writeChannel.closeFinally();
+
+        BlobKey croppedblobKey 				= fileService.getBlobKey(file);
+
+        croppedImageUrl		 				= image.getServingUrl(ServingUrlOptions.Builder.withBlobKey(croppedblobKey));
+        uploadSessionURL					= blobstoreService.createUploadUrl("/displayCroppedImage");
+        
+        blobstoreService.delete(oldblobKey);
 	}
+	
+	
 	@RequestMapping(value="/getCroppedImageUrl", method=RequestMethod.POST)
 	public void getCroppedImageUrl(HttpServletRequest req, HttpServletResponse response , HttpSession session) throws IOException
 	{
+		BlobstoreService blobStoreService 				= BlobstoreServiceFactory.getBlobstoreService();
 		PersistenceManager persistenceUserObject 		= PMF.get().getPersistenceManager();
-		
-		String userKey									= (String) session.getAttribute("userKeyLogin");
+		String userCompanyId							= (String)session.getAttribute("companyKey");
+		String userEmailID								= (String)session.getAttribute("emailIdFirst");
+		String oldImageUrl								= "";
 		ArrayList<String> updationList					= new ArrayList<String>();
 		
-		try
+		Query query										= persistenceUserObject.newQuery(UserProfile.class,"userName == '"+userEmailID+"' && companyId == '"+userCompanyId+"'");
+		List<UserProfile> userProfileDetails			= (List<UserProfile>)query.execute();
+		
+		
+		
+		for(UserProfile iteratingUserProfileDetails : userProfileDetails)
 		{
-			UserProfile userProfileInstance				= persistenceUserObject.getObjectById(UserProfile.class,userKey);
-			
-			if( !(userProfileInstance.getProfileUpdate().contains("profileImage")) && userProfileInstance.getProfileUpdate().contains("firstName") && userProfileInstance.getProfileUpdate().contains("lastName"))
+			if( !(iteratingUserProfileDetails.getProfileUpdate().contains("profileImage")) && iteratingUserProfileDetails.getProfileUpdate().contains("firstName") && iteratingUserProfileDetails.getProfileUpdate().contains("lastName") )
 			{
 				updationList.add("firstName");
 				updationList.add("lastName");
 				updationList.add("profileImage");
-				userProfileInstance.setProfileUpdate(updationList);
+				iteratingUserProfileDetails.setProfileUpdate(updationList);
 			}
-			else if(!(userProfileInstance.getProfileUpdate().contains("profileImage")))
+			else if(!(iteratingUserProfileDetails.getProfileUpdate().contains("profileImage")))
 			{
 				updationList.add("profileImage");
-				userProfileInstance.setProfileUpdate(updationList);
+				iteratingUserProfileDetails.setProfileUpdate(updationList);
 			}
-				
-			userProfileInstance.setprofilePicture((String) session.getAttribute("profileImageUploaded"));
 			
-			persistenceUserObject.makePersistent(userProfileInstance);
-		}
-		catch(Exception e)
-		{
-			System.out.println("Exception :: "+e);
-		}
-		finally
-		{
-			persistenceUserObject.close();
+			oldImageUrl									= iteratingUserProfileDetails.getprofilePicture();
+			iteratingUserProfileDetails.setprofilePicture(croppedImageUrl);
 			
-			response.setContentType("text/plain");
-			response.getWriter().println((String) session.getAttribute("profileImageUploaded")+","+(String) session.getAttribute("uploadSessionUrl"));
+			persistenceUserObject.currentTransaction().begin();
+			persistenceUserObject.makePersistent(iteratingUserProfileDetails);
+			persistenceUserObject.currentTransaction().commit();
 		}
+		
+//		if(oldImageUrl != null && !(oldImageUrl.equals("")))
+//        {
+//			if(!(oldImageUrl.equals((String)session.getAttribute("profileImageFirst"))))
+//			{
+//				blobStoreService.delete(new BlobKey(oldImageUrl.split("/")[(oldImageUrl.split("/").length)-1]));
+//			}
+//        }
+	
+		response.setContentType("text/plain");
+		response.getWriter().println(croppedImageUrl+","+uploadSessionURL);
 	}
-	
-	
-	
-//	@RequestMapping(value="/getCroppedImageUrl", method=RequestMethod.POST)
-//	public void getCroppedImageUrl(HttpServletRequest req, HttpServletResponse response , HttpSession session) throws IOException
-//	{
-//		BlobstoreService blobStoreService 				= BlobstoreServiceFactory.getBlobstoreService();
-//		PersistenceManager persistenceUserObject 		= PMF.get().getPersistenceManager();
-//		String userCompanyId							= (String)session.getAttribute("companyKey");
-//		String userEmailID								= (String)session.getAttribute("emailIdFirst");
-//		String oldImageUrl								= "";
-//		ArrayList<String> updationList					= new ArrayList<String>();
-//		
-//		Query query										= persistenceUserObject.newQuery(UserProfile.class,"userName == '"+userEmailID+"' && companyId == '"+userCompanyId+"'");
-//		List<UserProfile> userProfileDetails			= (List<UserProfile>)query.execute();
-//		
-//		
-//		
-//		for(UserProfile iteratingUserProfileDetails : userProfileDetails)
-//		{
-//			if( !(iteratingUserProfileDetails.getProfileUpdate().contains("profileImage")) && iteratingUserProfileDetails.getProfileUpdate().contains("firstName") && iteratingUserProfileDetails.getProfileUpdate().contains("lastName") )
-//			{
-//				updationList.add("firstName");
-//				updationList.add("lastName");
-//				updationList.add("profileImage");
-//				iteratingUserProfileDetails.setProfileUpdate(updationList);
-//			}
-//			else if(!(iteratingUserProfileDetails.getProfileUpdate().contains("profileImage")))
-//			{
-//				updationList.add("profileImage");
-//				iteratingUserProfileDetails.setProfileUpdate(updationList);
-//			}
-//			
-//			oldImageUrl									= iteratingUserProfileDetails.getprofilePicture();
-//			iteratingUserProfileDetails.setprofilePicture(croppedImageUrl);
-//			
-//			persistenceUserObject.currentTransaction().begin();
-//			persistenceUserObject.makePersistent(iteratingUserProfileDetails);
-//			persistenceUserObject.currentTransaction().commit();
-//		}
-//		
-////		if(oldImageUrl != null && !(oldImageUrl.equals("")))
-////        {
-////			if(!(oldImageUrl.equals((String)session.getAttribute("profileImageFirst"))))
-////			{
-////				blobStoreService.delete(new BlobKey(oldImageUrl.split("/")[(oldImageUrl.split("/").length)-1]));
-////			}
-////        }
-//	
-//		response.setContentType("text/plain");
-//		response.getWriter().println(croppedImageUrl+","+uploadSessionURL);
-//	}
 	
 	@RequestMapping(value="/revertToGoogleImage", method=RequestMethod.POST)
 	public void saveGooglePicture(HttpServletRequest req, HttpServletResponse response , HttpSession session) throws IOException
@@ -1039,7 +1241,7 @@ public class HomePageController extends HttpServlet {
 			persistenceUserObject.makePersistent(iteratingUserProfileDetails);
 			persistenceUserObject.currentTransaction().commit();
 		}
-//		System.out.println(oldImageUrl+" url");
+//		log.info(oldImageUrl+" url");
 //		if(oldImageUrl != null && !(oldImageUrl.equals("")))
 //        {
 //			if(!(oldImageUrl.equals((String)session.getAttribute("profileImageFirst"))))
@@ -1134,6 +1336,30 @@ public class HomePageController extends HttpServlet {
 			persistenceInstance.currentTransaction().begin();
 			persistenceInstance.makePersistent(iteratingUserProfileDetails);
 			persistenceInstance.currentTransaction().commit();
+		}
+	}
+	
+	@RequestMapping(value="/createCompany", method=RequestMethod.GET)
+	public void createCompany(HttpServletRequest requset, HttpServletResponse response, HttpSession session)throws IOException, JSONException
+	{
+			String companyName			 = requset.getParameter("user_company");
+			String companyKey			 = (String) session.getAttribute("companyKey");
+			
+			System.out.println(companyName+" in "+companyKey);
+		
+		if(companyName != null && companyKey != null && !(companyName.equals("")))
+		{
+			PersistenceManager persistenceInstance			= PMF.get().getPersistenceManager();
+			UserProfile userProfileInstance					= persistenceInstance.getObjectById(UserProfile.class,companyKey);
+			
+			userProfileInstance.setcompanyName(companyName);
+			
+			persistenceInstance.currentTransaction().begin();
+			persistenceInstance.makePersistent(userProfileInstance);
+			persistenceInstance.currentTransaction().commit();
+			
+			
+			persistenceInstance.close();
 		}
 	}
 	
@@ -1282,18 +1508,18 @@ public class HomePageController extends HttpServlet {
 	public void triggerTaskQueue(HttpServletRequest request, HttpServletResponse response , HttpSession session) throws IOException, JSONException
 	{
 		
-		System.out.println("triggering task queue");
+		log.info("triggering task queue");
 		Queue queue 			= QueueFactory.getQueue("cmsconfiguration");
 		queue.add(withUrl("/pushAllCompaniesIntoCMS"));
 		
-		System.out.println("triggered");
+		log.info("triggered");
 	}
 	
 	@RequestMapping("/pushAllCompaniesIntoCMS")
 	public void pushAllCompaniesIntoCMS(HttpServletRequest request, HttpServletResponse response , HttpSession session) throws IOException, JSONException
 	{
 		
-		System.out.println("succes fully queued");
+		log.info("succes fully queued");
 		
 		PersistenceManager persistenceInstance					= PMF.get().getPersistenceManager();
 		PersistenceManager persistenceObject					= PMF.get().getPersistenceManager();
@@ -1309,7 +1535,7 @@ public class HomePageController extends HttpServlet {
 //			UserProfile userProfileDetails						= persistenceInstance.getObjectById(UserProfile.class,iteratingCompaniesList); 
 //			String dataReturnedFromCMS							= cmsInstance.insertCompanyToCMS(userProfileDetails);
 //			
-//			System.out.println(dataReturnedFromCMS+" from cms controller 1");
+//			log.info(dataReturnedFromCMS+" from cms controller 1");
 //			
 //			if(dataReturnedFromCMS != null)
 //			{
@@ -1324,7 +1550,7 @@ public class HomePageController extends HttpServlet {
 //			for(UserProfile iteratingUserProfileDetails : userDetails)
 //			{	
 //				String staffCMSKey								= cmsInstance.insertStaffToCMS(cmsKey.getString("uniquepin"), iteratingUserProfileDetails);
-//				System.out.println(dataReturnedFromCMS+" from cms controller 2");
+//				log.info(dataReturnedFromCMS+" from cms controller 2");
 //				
 //				iteratingUserProfileDetails.setCmsKey(staffCMSKey);
 //				
@@ -1352,7 +1578,7 @@ public class HomePageController extends HttpServlet {
 			}
 		
 		
-		System.out.println("pushing to cms completed");
+		log.info("pushing to cms completed");
 	}*/
 
 }

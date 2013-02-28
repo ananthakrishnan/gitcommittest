@@ -20,6 +20,8 @@ import com.acti.jdo.PMF;
 import com.acti.jdo.UserProfile;
 import com.acti.jdo.UserStatusDetails;
 import com.adaptive.business.dao.AdaptiveYouDAO;
+import com.adaptive.business.dao.BadgeListDAO;
+import com.adaptive.business.dao.UserProfileDAO;
 
 public class UserHistoryServiceMethod {
 	static PersistenceManager pmf = PMF.get().getPersistenceManager();
@@ -28,7 +30,7 @@ public class UserHistoryServiceMethod {
 	@SuppressWarnings("unchecked")
 	public static void userHistoryDataStore(String company_Id,HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException
 	{
-		AdaptiveYouDAO adaptiveDAO 	= new AdaptiveYouoDataStore();
+		
 		objMapper.configure( JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES , true );
 		objMapper.configure( DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES , false );
 
@@ -45,8 +47,8 @@ public class UserHistoryServiceMethod {
 			}
 		}
 		
-		String badgesListMap = adaptiveDAO.getDataFromBadgeListTable(company_Id);
-		String userDetailsMap = adaptiveDAO.getDataFromUserProfile(company_Id);
+		String badgesListMap = BadgeListDAO.getDataFromBadgeListTable(company_Id);
+		String userDetailsMap = UserProfileDAO.getDataFromUserProfile(company_Id);
 		
 		request.setAttribute("transactionLog1",objMapper.writeValueAsString(mapTransaction1));
 		request.setAttribute("badges_list",badgesListMap);

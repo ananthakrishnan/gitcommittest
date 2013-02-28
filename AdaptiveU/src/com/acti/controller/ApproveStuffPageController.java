@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -25,7 +26,7 @@ import com.adaptive.business.service.ApproveStuffPage;
 
 @Controller
 public class ApproveStuffPageController extends HttpServlet {
-
+	private static final Logger log = Logger.getLogger(ApproveStuffPageController.class.getName());
 	@RequestMapping(value="/denyRequestForStuff" , method=RequestMethod.POST)
 	protected void denyStuff1(@RequestParam(value="uniqueUserKey", required=false) String uniqueUserKey,@RequestParam(value="stuffid", required=false) String stuffid,@RequestParam(value="userKey", required=false) String userid,@RequestParam(value="points", required=false) String points,HttpServletRequest request,HttpServletResponse response)
 	{

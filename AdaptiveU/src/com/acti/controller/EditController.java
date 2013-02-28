@@ -39,6 +39,7 @@ import com.acti.jdo.UserBadgeLogJdo;
 import com.acti.jdo.UserProfile;
 import com.acti.jdo.UserStuffInfo;
 import com.acti.jdo.UserStatusDetails;
+import com.adaptive.business.dao.UserStatusDetailsDAO;
 
 
 import javax.jdo.Query;
@@ -133,7 +134,7 @@ public class EditController extends HttpServlet{
 										userstatustablemodify.setVideostatus(al);
 										try
 									      {
-											freshrowvthvideo.makePersistent(userstatustablemodify);
+											UserStatusDetailsDAO.saveUserStatusDetails(userstatustablemodify);
 									      }
 									      catch(Exception e)
 									      {

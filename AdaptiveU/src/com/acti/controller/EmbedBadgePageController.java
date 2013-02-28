@@ -2,6 +2,7 @@ package com.acti.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -21,19 +22,20 @@ import com.acti.jdo.BadgesList;
 import com.acti.jdo.PMF;
 import com.acti.jdo.UserProfile;
 import com.adaptive.business.dao.AdaptiveYouDAO;
+import com.adaptive.business.dao.videodetailsDAO;
 import com.adaptive.business.service.AdaptiveYouServiceMethods;
 import com.adaptive.business.service.AdaptiveYouoDataStore;
 
 @Controller
 public class EmbedBadgePageController {
-	
+	private static final Logger log = Logger.getLogger(EmbedBadgePageController.class.getName());
 	@RequestMapping(value="/workOnBadge" , method=RequestMethod.GET)
 	public  String  verifyOpenIdResponseJson(@RequestParam(value="badgeId", required=false) String badgeId,@RequestParam(value="companyId", required=false) String companyId,@RequestParam(value="userKey", required=false) String userId,HttpServletRequest req, HttpServletResponse response , HttpSession session ) throws JsonGenerationException, JsonMappingException, IOException
 	{
 		try
 		{
-		   AdaptiveYouDAO adaptiveDAO = new AdaptiveYouoDataStore();
-		   String videodetailsMap= adaptiveDAO.getDataFromVideoDetails(companyId);
+		   
+		   String videodetailsMap= videodetailsDAO.getDataFromVideoDetails(companyId);
 		   req.setAttribute("videoDetailsMap",videodetailsMap);
 		   
 		   AdaptiveYouServiceMethods lserviceMethod = new AdaptiveYouServiceMethods();

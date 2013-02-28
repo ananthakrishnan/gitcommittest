@@ -16,14 +16,16 @@ import org.codehaus.jackson.map.ObjectMapper;
 import com.acti.jdo.ManageTeamJdo;
 import com.acti.jdo.UserProfile;
 import com.adaptive.business.dao.AdaptiveYouDAO;
+import com.adaptive.business.dao.ManageTeamDAO;
+import com.adaptive.business.dao.UserProfileDAO;
 
 public class ManageTeamServiceMethod 
 {
 	public static void manageTeamdatastore(String company_Id,HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException
 	{
-		AdaptiveYouDAO adaptiveDAO = new AdaptiveYouoDataStore();
-		String manageTeamMap = adaptiveDAO.getDataFromManageTeamJdo(company_Id);
-		String userProfileMap = adaptiveDAO.getDataFromUserProfile(company_Id);
+		
+		String manageTeamMap = ManageTeamDAO.getDataFromManageTeamJdo(company_Id);
+		String userProfileMap = UserProfileDAO.getDataFromUserProfile(company_Id);
 		request.setAttribute("teamMemInfo",manageTeamMap);
 		request.setAttribute("userMap",userProfileMap);
 	}

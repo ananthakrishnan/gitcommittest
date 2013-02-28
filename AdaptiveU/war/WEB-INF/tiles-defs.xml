@@ -9,8 +9,8 @@
 <definition name="login" template="/jsp/Login.jsp">
  </definition>
  
- <definition name="user" template="/jsp/AY2.0/meV2.jsp">
-    <!--  <definition name="user" template="/jsp/me.jsp">  -->
+ <!--<definition name="user" template="/jsp/AY2.0/meV2.jsp"> -->
+      <definition name="user" template="/jsp/me.jsp"> 
  </definition>
  
   <definition name="admin" template="/jsp/admin.jsp">
@@ -23,8 +23,8 @@
  <definition name="logout" template="/jsp/Login.jsp">
  </definition>
   
-<!--  <definition name="others" template="/jsp/others.jsp">-->
- <definition name="others" template="/jsp/AY2.0/everyone.jsp"> 
+ <definition name="others" template="/jsp/others.jsp">
+ <!-- <definition name="others" template="/jsp/AY2.0/everyone.jsp"> -->
  </definition> 
   
  <definition name="addNewBadge" template="/jsp/add_new_badge.jsp">
