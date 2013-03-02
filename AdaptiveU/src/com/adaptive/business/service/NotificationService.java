@@ -30,7 +30,7 @@ public class NotificationService
 						
 						mLogger.log( java.util.logging.Level.INFO , "\ncommitInfoAsJSON: " + commitInfoAsJSON);
 						
-						commitInfoAsJSON = commitInfoAsJSON.split("payload=")[1];
+						commitInfoAsJSON = commitInfoAsJSON.replace( "payload=" , "" );
 						
 						notificationMap = objectMapper.readValue( commitInfoAsJSON , new TypeReference<Map<String,Object>>(){} );
 						pusherMap = (Map<String,Object>) notificationMap.get( "pusher" );
