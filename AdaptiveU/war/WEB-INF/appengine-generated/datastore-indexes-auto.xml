@@ -1,18 +1,4 @@
-<!-- Indices written at Thu, 28 Feb 2013 20:06:44 GMT+05:30 -->
+<!-- Indices written at Sat, 2 Mar 2013 16:09:22 GMT+05:30 -->
 
-<datastore-indexes>
+<datastore-indexes/>
 
-    <!-- Used 4 times in query history -->
-    <datastore-index kind="UserProfile" ancestor="false" source="auto">
-        <property name="companyId" direction="asc"/>
-        <property name="userName" direction="asc"/>
-        <property name="type" direction="asc"/>
-    </datastore-index>
-
-    <!-- Used 2 times in query history -->
-    <datastore-index kind="UserStatusDetails" ancestor="false" source="auto">
-        <property name="companyId" direction="asc"/>
-        <property name="dateAdded" direction="asc"/>
-    </datastore-index>
-
-</datastore-indexes>

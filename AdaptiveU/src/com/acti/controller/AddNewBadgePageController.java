@@ -15,6 +15,7 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -36,6 +37,7 @@ import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -1143,4 +1145,157 @@ public class AddNewBadgePageController extends HttpServlet
 		persistenceObject.close();
 		persistenceInstance.close();
 	}*/
+	
+	@RequestMapping(value="/saveBadgeDetailsAPI", method=RequestMethod.POST)
+	protected @ResponseBody Map<String, Object> saveBadgeDetailsAPI(@RequestParam(value="badgeObject", required=false) String badgeObject,@RequestParam(value="videoListObject", required=false) String videoListObject,@RequestParam(value="arrayofTagsCreatedByAdmin[]", required=false) String[] arrayofTagsCreatedByAdmin,@RequestParam(value="arrayofTagsCreatedByUser[]", required=false) String[] arrayofTagsCreatedByUser, HttpServletRequest request,HttpServletResponse response,HttpSession session) throws IOException, JSONException 
+	{
+		String userCompanyId									= (String)session.getAttribute("companyKey");
+		
+		ArrayList<String> tagsContentList 						= new ArrayList<String>();
+		ArrayList<String> tagsList								= new ArrayList<String>();
+		ArrayList<String> temporaryList							= new ArrayList<String>();
+		
+		ArrayList<String> videoKeysList							= new ArrayList<String>();
+		ArrayList<String> oldVideoKeys							= new ArrayList<String>();
+		ArrayList<String> newVideoKeys							= new ArrayList<String>();
+		
+		PersistenceManager persistenceObject					= PMF.get().getPersistenceManager();
+		PersistenceManager editVideoDetailsPMF					= PMF.get().getPersistenceManager();
+		boolean status = false;
+		Map<String, Object> map = new HashMap<String, Object>();
+		BadgesList persistedBadgesList= null;
+		videodetails persistedVideoDetails = null;
+		/*ObjectMapper mapper = new ObjectMapper();
+		String badgeObject = "", videoListObject = "";
+		String[] arrayofTagsCreatedByAdmin = null,arrayofTagsCreatedByUser = null;*/ 
+
+		
+		try
+		{
+			
+			//badgeObject = mapper.readValue(json, String.class);
+		
+			if(videoListObject != null && !(videoListObject.equals("{}")))
+			{
+				PersistenceManager videoDetailsPMF					= PMF.get().getPersistenceManager();
+				JSONObject videoList								= new JSONObject(videoListObject);
+				Iterator<?> keys 									= videoList.keys();
+				
+				while( keys.hasNext() )
+				{
+					log.warning("inside while loop");
+		            String key										= (String)keys.next();
+		            if( videoList.get(key) instanceof JSONObject)
+		            {
+		            	JSONObject videoObject						= videoList.getJSONObject(key);
+		            	
+						if(videoObject.has("videoType"))
+						{
+							videodetails videoDetailsInstance			= new videodetails();
+							
+							videoDetailsInstance.setKey(UUID.randomUUID().toString());
+							videoDetailsInstance.setCompanyId(userCompanyId);
+							videoDetailsInstance.setViddesc(new Text(videoObject.getString("viddesc")));
+							videoDetailsInstance.setVideoId(key);
+							videoDetailsInstance.setVideothumbnail(videoObject.getString("videothumbnail"));
+							videoDetailsInstance.setVideourl(videoObject.getString("Videourl"));
+							videoDetailsInstance.setVidtitle(videoObject.getString("vidtitle"));
+							
+							persistedVideoDetails = videodetailsDAO.savevideodetails(videoDetailsInstance);
+							map.put("videolist", persistedVideoDetails);
+							
+							videoKeysList.add(videoDetailsInstance.getKey());
+							newVideoKeys.add(videoDetailsInstance.getKey());
+						}
+		            }
+			    }
+				editVideoDetailsPMF.close();
+			}
+
+			if(badgeObject != null && !(badgeObject.equals("{}")))
+			{
+				log.warning("inside badge object");
+				JSONObject	badgeDetails								= new JSONObject(badgeObject);
+				
+					if(arrayofTagsCreatedByAdmin != null && arrayofTagsCreatedByAdmin.length != 0)
+					{
+			 			for(int i = 0 ; i< arrayofTagsCreatedByAdmin.length;i++)
+			 			{
+			 				if(!(arrayofTagsCreatedByAdmin[i].equals("")))
+							{
+			 					tagsContentList.add(arrayofTagsCreatedByAdmin[i]+":"+0);
+							}	
+			 			}
+			 			tagsContentList.add("nimdasgat");
+					}
+					
+					BadgesList badgesListInstance				= new BadgesList();
+					
+					UUID uniqueKey								= UUID.randomUUID();
+					
+					badgesListInstance.setKey(uniqueKey.toString());
+					//badgesListInstance.setbadgeAssignee(badgeDetails.getString("badgeAssignee"));
+					badgesListInstance.setbadgeAssignee("4c1c01b1-54d1-4968-a730-bca67e1e15bb");
+					badgesListInstance.setbadgeDiscription(new Text(badgeDetails.getString("badgeDiscription")));
+					//badgesListInstance.setBadgeLogoPath(badgeDetails.getString("badgeLogoPath"));
+					badgesListInstance.setBadgeLogoPath("http://127.0.0.1:8888/_ah/img/sIA7jiMiQNlF6NacYZiNtA");
+					badgesListInstance.setBadgeName(badgeDetails.getString("badgeName"));
+					badgesListInstance.setBadgeTagsContents(tagsContentList);
+					badgesListInstance.setbadgeType(badgeDetails.getString("badgeType"));
+					badgesListInstance.setbadgeValue(Integer.parseInt(badgeDetails.getString("badgeValue")));
+					//badgesListInstance.setCompanyId(userCompanyId);
+					badgesListInstance.setCompanyId("4c1c01b1-54d1-4968-a730-bca67e1e15bb");
+					badgesListInstance.setcreatedDate(new Date());
+					badgesListInstance.setIsFlag("enabled");
+					badgesListInstance.setVideoid(videoKeysList);
+					if(badgeDetails.has("canEarnedTwice"))
+						badgesListInstance.setCanEarnedTwice(badgeDetails.getString("canEarnedTwice"));
+					else//
+						badgesListInstance.setCanEarnedTwice("true");
+					/*if(badgeDetails.has("badgeImageBlobkey"))
+					{
+						badgesListInstance.setBadgeImageBlobkey(badgeDetails.getString("badgeImageBlobkey"));
+					}*/
+					badgesListInstance.setBadgeImageBlobkey("sIA7jiMiQNlF6NacYZiNtA");
+					
+					if(badgeDetails.has("contentType"))
+					{
+						badgesListInstance.setContentType(badgeDetails.getString("contentType"));
+					}
+					else//
+						badgesListInstance.setContentType("true");
+					
+					if(badgeDetails.has("maximumQuantity"))
+					{
+						if(badgeDetails.getString("maximumQuantity").equals("infinite"))
+						{
+							badgesListInstance.setQunatity(-1);
+						}
+						else
+						{
+							badgesListInstance.setQunatity(Integer.parseInt(badgeDetails.getString("maximumQuantity")));
+						}
+					}
+					log.warning("persisting");
+					persistedBadgesList = BadgeListDAO.saveAuctionTransactions(badgesListInstance);
+					
+					persistenceObject.close();
+					map.put("BadgesList", persistedBadgesList);
+					
+					//response.setContentType("text/plain");
+					//response.getWriter().println(uniqueKey.toString());
+			}
+			status = true;
+		}
+		catch(Exception e)
+		{
+			log.warning("Exception occured in SaveBadgeDetails");
+			e.printStackTrace();
+		}
+		finally{
+			map.put("success", status);
+		}
+		
+		return map;
+	}
 }

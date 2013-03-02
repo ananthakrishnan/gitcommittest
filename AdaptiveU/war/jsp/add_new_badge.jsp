@@ -373,8 +373,7 @@ import="com.google.appengine.api.blobstore.BlobstoreServiceFactory"
                               </ul>
                               <div class="clear_all"></div>
                               <span class="grn_btn2 add_vlink add_vlink_act">Add Video Link</span>
-                            <div class="clear_all"></div>
-                            
+                            <div class="clear_all"></div>                            
                             <div class="tagItStyle">
                             <span id="allTagsCreated"></span>
                             <span><img id="adminAddNewTag" src="images/icons.png"/></span>
@@ -423,7 +422,7 @@ import="com.google.appengine.api.blobstore.BlobstoreServiceFactory"
                  <div class="clear_all"></div>
             </div><!-- btn_holder -->  
         </div>
-</div> 
+</div>
 
 <!-- Added for badgeLibrary -->
 
