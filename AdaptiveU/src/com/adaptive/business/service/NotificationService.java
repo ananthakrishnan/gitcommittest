@@ -53,7 +53,7 @@ public class NotificationService
 						
 						userCommitBadge = NotificationDAO.createUserCommitBadge( userCommitBadge );
 						
-						mLogger.log( java.util.logging.Level.INFO , "\n count: " + userCommitBadge.getCount());
+						mLogger.log( java.util.logging.Level.INFO , "\n userId: " + userId + "count: " + userCommitBadge.getCount());
 					}
 				catch(Exception ex)
 					{
