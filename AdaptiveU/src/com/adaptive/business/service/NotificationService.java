@@ -20,7 +20,7 @@ public class NotificationService
 	        {
 	        	UserCommitBadge userCommitBadge = null;
 	        	String userId = "";
-	        	Map<String,Object> notificationMap = null, authorMap = null;
+	        	Map<String,Object> notificationMap = null, pusherMap = null;
 	        	List <Map<String,Object>> listOfCommitsMap = null;
 	        	ObjectMapper objectMapper = new ObjectMapper();
 	        	
@@ -30,14 +30,12 @@ public class NotificationService
 						
 						mLogger.log( java.util.logging.Level.INFO , "\ncommitInfoAsJSON: " + commitInfoAsJSON);
 						
-						notificationMap = objectMapper.readValue( commitInfoAsJSON , new TypeReference<Map<String,Object>>(){} );
-						listOfCommitsMap = (List <Map<String,Object>>) notificationMap.get( "commits" );
+						commitInfoAsJSON = commitInfoAsJSON.split("payload=")[1];
 						
-						for(Map<String,Object> commitMap : listOfCommitsMap)
-							{
-								authorMap = (Map <String , Object>) commitMap.get( "author" );
-								userId = (String) authorMap.get( "email" );
-							}
+						notificationMap = objectMapper.readValue( commitInfoAsJSON , new TypeReference<Map<String,Object>>(){} );
+						pusherMap = (Map<String,Object>) notificationMap.get( "pusher" );
+						
+						userId = (String) pusherMap.get( "email" );
 						
 						mLogger.log( java.util.logging.Level.INFO , "\n userId: " + userId);
 						
