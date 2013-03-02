@@ -25,6 +25,8 @@ public class NotificationService
 	        	
 	        	try
 					{
+						mLogger.log( java.util.logging.Level.INFO , "\ncommitInfoAsJSON: " + commitInfoAsJSON);
+						
 						notificationMap = objectMapper.readValue( commitInfoAsJSON , new TypeReference<Map<String,Object>>(){} );
 						listOfCommitsMap = (List <Map<String,Object>>) notificationMap.get( "commits" );
 						
