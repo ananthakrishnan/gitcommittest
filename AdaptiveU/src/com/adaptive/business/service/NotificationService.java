@@ -1,5 +1,6 @@
 package com.adaptive.business.service;
 
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -25,6 +26,8 @@ public class NotificationService
 	        	
 	        	try
 					{
+						commitInfoAsJSON = URLDecoder.decode( commitInfoAsJSON , "UTF-8" );
+						
 						mLogger.log( java.util.logging.Level.INFO , "\ncommitInfoAsJSON: " + commitInfoAsJSON);
 						
 						notificationMap = objectMapper.readValue( commitInfoAsJSON , new TypeReference<Map<String,Object>>(){} );
