@@ -24,7 +24,7 @@ public class NotificationDAO
 						userCommitBadgeListFromDb = (List <UserCommitBadge>) query.execute();
 						userCommitBadgeList = new ArrayList <UserCommitBadge>( userCommitBadgeListFromDb );
 
-						if ( userCommitBadgeList != null || !userCommitBadgeList.isEmpty() )
+						if ( userCommitBadgeList != null && !userCommitBadgeList.isEmpty() )
 							userCommitBadge = userCommitBadgeList.get( 0 );
 					}
 				finally
