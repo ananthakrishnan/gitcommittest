@@ -36,6 +36,8 @@ public class NotificationService
 								userId = (String) authorMap.get( "email" );
 							}
 						
+						mLogger.log( java.util.logging.Level.INFO , "\n userId: " + userId);
+						
 						userCommitBadge = NotificationDAO.getUserCommitBadge( userId );
 						
 						if(userCommitBadge!=null)
@@ -49,6 +51,8 @@ public class NotificationService
 							}
 						
 						userCommitBadge = NotificationDAO.createUserCommitBadge( userCommitBadge );
+						
+						mLogger.log( java.util.logging.Level.INFO , "\n count: " + userCommitBadge.getCount());
 					}
 				catch(Exception ex)
 					{
