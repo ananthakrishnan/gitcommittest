@@ -87,6 +87,7 @@ public class UserProfilePage {
 				 UserCommitBadge userCommitBadge = null;
                 try
 	                {
+	                	System.out.println("emailId: " + emailId);
 		                userCommitBadge = NotificationDAO.getUserCommitBadge( emailId.toLowerCase() );
 	                }
                 catch ( Exception e )
