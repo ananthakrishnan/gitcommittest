@@ -83,11 +83,11 @@ public class UserProfilePage {
 				}
 				 String userBadgeLogJdoMap =  UserBadgeLogDAO.getDataFromUserBadgeLogJdo(compId);
 				 req.setAttribute("userBadgeLogJdoMap",userBadgeLogJdoMap);
-				 
+
 				 UserCommitBadge userCommitBadge = null;
                 try
 	                {
-		                userCommitBadge = NotificationDAO.getUserCommitBadge( userKey );
+		                userCommitBadge = NotificationDAO.getUserCommitBadge( emailId.toLowerCase() );
 	                }
                 catch ( Exception e )
 	                {
