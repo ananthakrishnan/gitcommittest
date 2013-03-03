@@ -286,6 +286,13 @@ background: url(../images/medium-cta.png) 0px -112px no-repeat;
 		userBadgeLogJdoMap = (String)request.getAttribute("userBadgeLogJdoMap");
 	}
 	
+	int commitCount = 0;
+	
+	UserCommitBadge userCommitBadge = (UserCommitBadge) request.getAttribute("userCommitBadge");
+	
+	if(userCommitBadge!=null)
+		commitCount = userCommitBadge.getCount();
+	
 	 String userStatusDetailsMap="{}";
 	 if(request.getAttribute("userStatusDetailsMap") != null)
 	 {
@@ -354,6 +361,7 @@ background: url(../images/medium-cta.png) 0px -112px no-repeat;
 	var companyList 			= <%= companyDetails %>;
 	var auctionListMap			= <%= auctionListMap%>;
 	var requestURL 				= '<%= requestURLFromFeedback%>';
+	var commitCount				= '<%= commitCount %>';
 	
 	  var uploadSessionURL="";
 	    
@@ -509,6 +517,8 @@ background: url(../images/medium-cta.png) 0px -112px no-repeat;
 									Badges</li>
 								<li class="trophy_total"><span class="trophyDB_total">0</span>
 									Trophies</li>
+								<li class="trophy_total"><span class="commitDB_total">0</span>
+									Commits</li>
 							</ul>
 							<div class="total">0</div>
 						</div>

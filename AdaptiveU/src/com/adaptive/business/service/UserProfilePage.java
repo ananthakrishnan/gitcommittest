@@ -20,10 +20,11 @@ import org.codehaus.jackson.map.ObjectMapper;
 import com.acti.jdo.ManageTeamJdo;
 import com.acti.jdo.PMF;
 import com.acti.jdo.UserBadgeLogJdo;
-import com.adaptive.business.dao.AdaptiveYouDAO;
+import com.acti.jdo.UserCommitBadge;
 import com.adaptive.business.dao.AuctionListDAO;
 import com.adaptive.business.dao.BadgeListDAO;
 import com.adaptive.business.dao.ManageTeamDAO;
+import com.adaptive.business.dao.NotificationDAO;
 import com.adaptive.business.dao.UserBadgeLogDAO;
 import com.adaptive.business.dao.UserProfileDAO;
 import com.adaptive.business.dao.UserStatusDetailsDAO;
@@ -82,7 +83,18 @@ public class UserProfilePage {
 				}
 				 String userBadgeLogJdoMap =  UserBadgeLogDAO.getDataFromUserBadgeLogJdo(compId);
 				 req.setAttribute("userBadgeLogJdoMap",userBadgeLogJdoMap);
-		   
+				 
+				 UserCommitBadge userCommitBadge = null;
+                try
+	                {
+		                userCommitBadge = NotificationDAO.getUserCommitBadge( userKey );
+	                }
+                catch ( Exception e )
+	                {
+		                // TODO Auto-generated catch block
+		                e.printStackTrace();
+	                }
+				 req.setAttribute("userCommitBadge",userCommitBadge);
 		
 		  
 		    

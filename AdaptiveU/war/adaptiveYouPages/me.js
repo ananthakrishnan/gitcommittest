@@ -726,6 +726,7 @@ $(document).ready(function()
 			var trophiesArray 	= new Array();
 			var userBadgeLi 	= "";
 			var userTrophyLi	= "";
+			var totalPoints = 0;
 			
 			if(String(userBadgeLogJdoMap[index].badgeId).indexOf(",") != -1)
 				badgesArray = String(userBadgeLogJdoMap[index].badgeId).split(",");
@@ -738,10 +739,9 @@ $(document).ready(function()
 				trophiesArray.push(String(userBadgeLogJdoMap[index].trophyId));
 			
 			
-			
 			$('.badgeDB_total').html(badgesArray.length);
 			$('.trophyDB_total').html(trophiesArray.length);
-			
+			$('.commitDB_total').html(commitCount);
 			   
 			var badgeCount			= "";
 			var displayCount		= "";
@@ -797,7 +797,10 @@ $(document).ready(function()
 			}
 			
 			$("#total_trophies").html(userTrophyLi);
-			$('.total').html(userBadgeLogJdoMap[index].points);
+			
+			totalPoints = parseInt(userBadgeLogJdoMap[index].points) + parseInt(commitCount);
+			
+			$('.total').html(totalPoints);
 			}
 		}
 	
